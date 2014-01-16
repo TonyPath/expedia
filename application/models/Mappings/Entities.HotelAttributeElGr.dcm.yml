@@ -1,0 +1,11 @@
+Entities\HotelAttributeElGr:
+ type: entity
+ table: attributelist_el_gr
+ id:
+  id: 
+   type: integer
+   column: AttributeID
+ fields:
+  description:
+   column: AttributeDesc
+    

@@ -1,0 +1,68 @@
+Entities\Hotel:
+ type: entity
+ repositoryClass: Repositories\HotelRepository
+ table: activepropertylist
+ id:
+  id: 
+   type: integer
+   column: EANHotelID
+ fields:
+  name:
+   column: Name
+  address1:
+   column: Address1
+  address2:
+   column: Address2
+  city:
+   column: City
+  stateProvince:
+   columm: StateProvince
+  postalCode:
+   column: PostalCode
+  country:
+   column: Country
+  latitude:
+   column: Latitude
+  longitude:
+   column: Longitude
+  airportCode:
+   column: AirportCode
+  currency:
+   column: PropertyCurrency
+  starRating:
+   column: StarRating
+   type: decimal
+   precision: 2
+   scale: 1
+  confidence: 
+   column: Confidence
+   type: integer
+  supplierType:
+   column: SupplierType
+  location:
+   column: Location
+  highRate:
+   column: HighRate
+  lowRate:
+   column: LowRate
+  checkInTime:
+   column: CheckInTime
+  checkOutTime:
+   column: CheckOutTime             
+ manyToOne:
+  category:
+   targetEntity: HotelType
+   inversedBy: hotels
+   joinColumn:
+    name: PropertyCategory 
+    referencedColumnName: PropertyCategory
+ oneToMany: 
+  regions:
+   targetEntity: RegionHotelMapping
+   mappedBy: hotel
+  images:
+   targetEntity: HotelImage 
+   mappedBy: hotel
+  attributes:
+   targetEntity: AttributeHotelMapping
+   mappedBy: hotel

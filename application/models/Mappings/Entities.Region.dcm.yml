@@ -1,0 +1,18 @@
+Entities\Region:
+ type: entity
+ table: parentregionlist
+ id:
+  id: 
+   type: integer
+   column: RegionID
+ fields:
+  name:
+   column: RegionName
+  nameLong:
+   column: RegionNameLong  
+ oneToMany: 
+  hotels:
+   targetEntity: RegionHotelMapping
+   mappedBy: region
+   
+  

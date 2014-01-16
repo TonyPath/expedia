@@ -1,0 +1,14 @@
+Entities\AttributeHotelMappingElGr:
+ type: entity
+ table: propertyattributelink_el_gr
+ id:
+  attributeID: 
+   type: integer
+   column: AttributeID
+  eanHotelID:
+   type : integer
+   column: EANHotelID
+ fields:
+  appendTxt:
+   column: AppendTxt 
+  

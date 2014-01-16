@@ -1,0 +1,23 @@
+Entities\HotelImage:
+ type: entity
+ table: hotelimagelist
+ id:
+  url: 
+   type: string
+   column: URL
+ fields:
+  hotelID:
+   column: EANHotelID
+   type: integer
+  caption:
+   columm: Caption
+  thumbURL:
+   column: ThumbnailURL  
+ manyToOne:
+  hotel:
+   targetEntity: Hotel
+   inversedBy: images
+   joinColumn:
+    name: EANHotelID 
+    referencedColumnName: EANHotelID
+  

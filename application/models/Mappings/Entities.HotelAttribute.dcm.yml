@@ -1,0 +1,22 @@
+Entities\HotelAttribute:
+ type: entity
+ table: attributelist
+ #inheritanceType: SINGLE_TABLE
+ #discriminatorColumn:
+ # name: Type
+ # type: string
+ #discriminatorMap:
+ # RoomAmenity: RoomAmenity
+ # PropertyAmenity: PropertyAmenity
+ # Policy: PolicyAmenity
+ id:
+  id: 
+   type: integer
+   column: AttributeID
+ fields:
+  description:
+   column: AttributeDesc
+ oneToMany: 
+  hotels:
+   targetEntity: AttributeHotelMapping
+   mappedBy: attribute    

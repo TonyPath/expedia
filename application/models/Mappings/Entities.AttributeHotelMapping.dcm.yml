@@ -1,0 +1,27 @@
+Entities\AttributeHotelMapping:
+ type: entity
+ table: propertyattributelink
+ id:
+  attributeID: 
+   type: integer
+   column: AttributeID
+  eanHotelID:
+   type : integer
+   column: EANHotelID
+ fields:
+  appendTxt:
+   column: AppendTxt 
+ manyToOne:
+  hotel:
+   targetEntity: Hotel
+   inversedBy: attributes
+   joinColumn:
+    name: EANHotelID 
+    referencedColumnName: EANHotelID
+  attribute:
+   targetEntity: HotelAttribute
+   inversedBy: hotels
+   joinColumn:
+    name: AttributeID 
+    referencedColumnName: AttributeID
+  

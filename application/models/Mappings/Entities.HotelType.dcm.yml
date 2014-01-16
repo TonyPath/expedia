@@ -1,0 +1,15 @@
+Entities\HotelType:
+ type: entity
+ table: propertytypelist
+ id:
+  id:
+   type: integer
+   column: PropertyCategory
+ fields:
+  name:
+   column: PropertyCategoryDesc
+ oneToMany:
+  hotels:
+   targetEntity: Hotel
+   mappedBy: category
+   

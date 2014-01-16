@@ -1,0 +1,25 @@
+Entities\RegionHotelMapping:
+ type: entity
+ table: regioneanhotelidmapping
+ id:
+  regionID: 
+   type: integer
+   column: RegionID
+  eanHotelID:
+   type : integer
+   column: EANHotelID
+ fields:
+ manyToOne:
+  hotel:
+   targetEntity: Hotel
+   inversedBy: regions
+   joinColumn:
+    name: EANHotelID 
+    referencedColumnName: EANHotelID
+  region:
+   targetEntity: Region
+   inversedBy: hotels
+   joinColumn:
+    name: RegionID 
+    referencedColumnName: RegionID
+  

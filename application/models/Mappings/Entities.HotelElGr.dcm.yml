@@ -1,0 +1,17 @@
+Entities\HotelElGr:
+ type: entity
+ repositoryClass: Repositories\HotelRepositoryElGr
+ table: activepropertylist_el_gr
+ id:
+  id: 
+   type: integer
+   column: EANHotelID
+ fields:
+  name:
+   column: Name
+  location:
+   column: Location
+  checkInTime:
+   column: CheckInTime
+  checkOutTime:
+   column: CheckOutTime             
