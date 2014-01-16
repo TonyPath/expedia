@@ -31,8 +31,7 @@ class Welcome extends CI_Controller {
 		
 		$r = $this->doctrine->em->getRepository('Entities\Hotel')->getHotels();
 		
-		var_dump($r);
-		
+		Zend\Debug\Debug::dump($r);		
 		exit;
 		
 		$r = $this->doctrine->em->getRepository('Entities\Hotel')->helloWorld();

@@ -1,6 +1,8 @@
 {
 	"require": {
 		"doctrine/orm": "2.3.4",
-		"symfony/yaml": "2.*"
+		"symfony/yaml": "2.*",
+		"zendframework/zend-http": "2.2.5",
+		"zendframework/zend-debug": "2.2.0"
 	}
 }
