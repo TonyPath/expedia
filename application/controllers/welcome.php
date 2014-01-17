@@ -20,6 +20,7 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		header('Content-Type: text/html; charset=utf-8');
+
 		
 		/*
 		$r = $this->doctrine->em->getRepository('Entities\Hotel')->getHotelAmenities();
