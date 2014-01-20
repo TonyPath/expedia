@@ -3,6 +3,7 @@
 namespace Repositories;
 
 use Doctrine\ORM\EntityRepository;
+use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
 
 /**
  * HotelRepository
@@ -61,9 +62,24 @@ class HotelRepository extends EntityRepository
 		$qb->andWhere("HotelRegionMapping.regionID in (:regions)");
 		$qb->setParameter('regions', array(800001));
 		
-		$result = $qb->setMaxResults(200)->getQuery();
+		//$result = $qb->setMaxResults(200)->getQuery();
+		$paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($qb->getQuery(), $fetchJoinCollection = true);
+		$pageSize = 50;
+		$totalItems = count($paginator);
+		$pagesCount = ceil($totalItems / $pageSize);
 		
-		return $result->getResult();
+		$results = $paginator->getQuery()
+					->setFirstResult($pageSize * 0)
+					->setMaxResults($pageSize)
+					->getResult();
+		
+		//$return = new \stdClass();
+		return $paginator;
+		
+		//return $return;
+		
+		
+		//return $result->getResult();
 	}
 	
 	public function getHotelAmenities(){
