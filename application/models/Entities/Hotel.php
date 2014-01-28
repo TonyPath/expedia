@@ -944,4 +944,32 @@ class Hotel
     {
         return $this->chain;
     }
+    /**
+     * @var integer
+     */
+    private $sequenceNumber;
+
+
+    /**
+     * Set sequenceNumber
+     *
+     * @param integer $sequenceNumber
+     * @return Hotel
+     */
+    public function setSequenceNumber($sequenceNumber)
+    {
+        $this->sequenceNumber = $sequenceNumber;
+    
+        return $this;
+    }
+
+    /**
+     * Get sequenceNumber
+     *
+     * @return integer 
+     */
+    public function getSequenceNumber()
+    {
+        return $this->sequenceNumber;
+    }
 }

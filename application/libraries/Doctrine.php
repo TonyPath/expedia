@@ -25,6 +25,10 @@ class Doctrine
         $repoClassLoader = new \Doctrine\Common\ClassLoader('Repositories', APPPATH.'models');
         $repoClassLoader->register();
         
+        // load the repo entities
+        $doctrineExtentionsClassLoader = new \Doctrine\Common\ClassLoader('DoctrineExtensions', APPPATH.'libraries');
+        $doctrineExtentionsClassLoader->register();
+        
         // set up the configuration 
         $config = new \Doctrine\ORM\Configuration;
 

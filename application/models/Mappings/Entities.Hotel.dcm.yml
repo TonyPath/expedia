@@ -7,6 +7,9 @@ Entities\Hotel:
    type: integer
    column: EANHotelID
  fields:
+  sequenceNumber: 
+   column: SequenceNumber
+   type: integer
   name:
    column: Name
   address1:

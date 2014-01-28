@@ -3,7 +3,7 @@
 namespace Repositories;
 
 use Doctrine\ORM\EntityRepository;
-use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
+use DoctrineExtensions\Query\Mysql\Field;
 
 /**
  * HotelRepository
@@ -34,10 +34,14 @@ class HotelRepository extends EntityRepository
 	public function getHotels($regionIDList = null, $lang = "ElGr"){
 
 		$em = $this->_em;
+		$doctrineConfig = $em->getConfiguration();
+		$doctrineConfig->addCustomStringFunction('FIELD', 'DoctrineExtensions\Query\Mysql\Field');
 
 		$qb = $em->createQueryBuilder();
 
 		$qb->select("Hotel as hotel");
+		
+		$qb->addSelect("Field(Hotel.supplierType, 'ESR','EEM','GDS') as HIDDEN supplier");
 		
 		if ($lang){
 			$qb->addSelect("COALESCE(HotelLang.name, Hotel.name) AS name");
@@ -66,10 +70,15 @@ class HotelRepository extends EntityRepository
 		$qb->setParameter('regions', $regionIDList);
 		
 		if(true){
+			//$qb->add("orderBy","FIELD(hotel.supplierType,ESR,EEM,GDS)");
+			$qb->addOrderBy('supplier');
+			//$qb->addOrderBy('Hotel.confidence', 'DESC');
 			//$qb->addOrderBy('Hotel.highRate', 'ASC');
-			//$qb->addOrderBy('Hotel.confidence', 'ASC');
-			$qb->addOrderBy('Hotel.starRating', 'ASC');
+			//$qb->addOrderBy('Hotel.starRating', 'DESC');
 		}
+		
+		
+		//print_r($qb->getQuery()->getAST());
 		
 		$results = $qb->setMaxResults(100)->getQuery()->getResult();
 		/*
