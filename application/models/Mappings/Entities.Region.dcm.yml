@@ -9,10 +9,26 @@ Entities\Region:
   name:
    column: RegionName
   nameLong:
-   column: RegionNameLong  
+   column: RegionNameLong
+  subClass:
+   column: SubClass
+  type:
+   column: RegionType
+  parentID:
+   column: ParentRegionID
+   type: integer
+  parentType:
+   column: ParentRegionType
+  parentName:
+   column: ParentRegionName
+  parentNameLong:
+   column: ParentRegionNameLong
  oneToMany: 
   hotels:
    targetEntity: RegionHotelMapping
    mappedBy: region
-   
+ oneToOne:
+  coordinates:
+   targetEntity: RegionCenterCoordinates
+   mappedBy: region  
   

@@ -5,9 +5,9 @@ namespace Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * HotelElGr
+ * RegionCenterCoordinates
  */
-class HotelElGr
+class RegionCenterCoordinates
 {
     /**
      * @var integer
@@ -22,24 +22,24 @@ class HotelElGr
     /**
      * @var string
      */
-    private $location;
+    private $latitude;
 
     /**
      * @var string
      */
-    private $checkInTime;
+    private $longitude;
 
     /**
-     * @var string
+     * @var \Entities\Region
      */
-    private $checkOutTime;
+    private $region;
 
 
     /**
      * Set id
      *
      * @param integer $id
-     * @return HotelElGr
+     * @return RegionCenterCoordinates
      */
     public function setId($id)
     {
@@ -62,7 +62,7 @@ class HotelElGr
      * Set name
      *
      * @param string $name
-     * @return HotelElGr
+     * @return RegionCenterCoordinates
      */
     public function setName($name)
     {
@@ -82,71 +82,71 @@ class HotelElGr
     }
 
     /**
-     * Set location
+     * Set latitude
      *
-     * @param string $location
-     * @return HotelElGr
+     * @param string $latitude
+     * @return RegionCenterCoordinates
      */
-    public function setLocation($location)
+    public function setLatitude($latitude)
     {
-        $this->location = $location;
+        $this->latitude = $latitude;
     
         return $this;
     }
 
     /**
-     * Get location
+     * Get latitude
      *
      * @return string 
      */
-    public function getLocation()
+    public function getLatitude()
     {
-        return $this->location;
+        return $this->latitude;
     }
 
     /**
-     * Set checkInTime
+     * Set longitude
      *
-     * @param string $checkInTime
-     * @return HotelElGr
+     * @param string $longitude
+     * @return RegionCenterCoordinates
      */
-    public function setCheckInTime($checkInTime)
+    public function setLongitude($longitude)
     {
-        $this->checkInTime = $checkInTime;
+        $this->longitude = $longitude;
     
         return $this;
     }
 
     /**
-     * Get checkInTime
+     * Get longitude
      *
      * @return string 
      */
-    public function getCheckInTime()
+    public function getLongitude()
     {
-        return $this->checkInTime;
+        return $this->longitude;
     }
 
     /**
-     * Set checkOutTime
+     * Set region
      *
-     * @param string $checkOutTime
-     * @return HotelElGr
+     * @param \Entities\Region $region
+     * @return RegionCenterCoordinates
      */
-    public function setCheckOutTime($checkOutTime)
+    public function setRegion(\Entities\Region $region = null)
     {
-        $this->checkOutTime = $checkOutTime;
+        $this->region = $region;
     
         return $this;
     }
 
     /**
-     * Get checkOutTime
+     * Get region
      *
-     * @return string 
+     * @return \Entities\Region 
      */
-    public function getCheckOutTime()
+    public function getRegion()
     {
-        return $this->checkOutTime;
+        return $this->region;
     }
 }

@@ -48,7 +48,10 @@ Entities\Hotel:
   checkInTime:
    column: CheckInTime
   checkOutTime:
-   column: CheckOutTime             
+   column: CheckOutTime
+  regionID:
+   column: RegionID
+   type: integer              
  manyToOne:
   category:
    targetEntity: HotelType
@@ -56,7 +59,13 @@ Entities\Hotel:
    joinColumn:
     name: PropertyCategory 
     referencedColumnName: PropertyCategory
- oneToMany: 
+  chain:
+   targetEntity: HotelChain
+   inversedBy: hotels
+   joinColumn:
+    name: ChainCodeID
+    referencedColumnName: ChainCodeID
+ oneToMany:
   regions:
    targetEntity: RegionHotelMapping
    mappedBy: hotel
@@ -66,3 +75,22 @@ Entities\Hotel:
   attributes:
    targetEntity: AttributeHotelMapping
    mappedBy: hotel
+ oneToOne:
+  description:
+   targetEntity: HotelDescription
+   mappedBy: hotel
+  policy:
+   targetEntity: HotelPolicy
+   mappedBy: hotel
+  areaAttractions:
+   targetEntity: HotelAreaAttraction
+   mappedBy: hotel
+  whatToExpect:
+   targetEntity: HotelWhatToExpect
+   mappedBy: hotel
+  spaDescription:
+   targetEntity: HotelSpaDescription
+   mappedBy: hotel
+  diningDescription:
+   targetEntity: HotelDiningDescription
+   mappedBy: hotel    

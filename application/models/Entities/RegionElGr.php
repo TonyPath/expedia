@@ -5,9 +5,9 @@ namespace Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Region
+ * RegionElGr
  */
-class Region
+class RegionElGr
 {
     /**
      * @var integer
@@ -24,24 +24,12 @@ class Region
      */
     private $nameLong;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $hotels;
 
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->hotels = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
     /**
      * Set id
      *
      * @param integer $id
-     * @return Region
+     * @return RegionElGr
      */
     public function setId($id)
     {
@@ -64,7 +52,7 @@ class Region
      * Set name
      *
      * @param string $name
-     * @return Region
+     * @return RegionElGr
      */
     public function setName($name)
     {
@@ -87,7 +75,7 @@ class Region
      * Set nameLong
      *
      * @param string $nameLong
-     * @return Region
+     * @return RegionElGr
      */
     public function setNameLong($nameLong)
     {
@@ -104,38 +92,5 @@ class Region
     public function getNameLong()
     {
         return $this->nameLong;
-    }
-
-    /**
-     * Add hotels
-     *
-     * @param \Entities\RegionHotelMapping $hotels
-     * @return Region
-     */
-    public function addHotel(\Entities\RegionHotelMapping $hotels)
-    {
-        $this->hotels[] = $hotels;
-    
-        return $this;
-    }
-
-    /**
-     * Remove hotels
-     *
-     * @param \Entities\RegionHotelMapping $hotels
-     */
-    public function removeHotel(\Entities\RegionHotelMapping $hotels)
-    {
-        $this->hotels->removeElement($hotels);
-    }
-
-    /**
-     * Get hotels
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getHotels()
-    {
-        return $this->hotels;
     }
 }

@@ -31,27 +31,30 @@ class HotelRepository extends EntityRepository
 		return $result->getResult()[0];
 	}
 	
-	public function getHotels(){
+	public function getHotels($regionIDList = null, $lang = "ElGr"){
 
 		$em = $this->_em;
-		
+
 		$qb = $em->createQueryBuilder();
+
+		$qb->select("Hotel as hotel");
 		
-		$qb->select(array(
-			"Hotel AS hotel",
-			"COALESCE(HotelLang.name, Hotel.name) AS hotelName",
-			"COALESCE(HotelLang.location, Hotel.location) AS hotelLocation"
-		));
+		if ($lang){
+			$qb->addSelect("COALESCE(HotelLang.name, Hotel.name) AS name");
+			$qb->addSelect("COALESCE(HotelLang.location, Hotel.location) AS location");
+		}
+		
 		
 		$qb->from("Entities\Hotel", "Hotel");
 		
 		
-		$qb->leftJoin(
-			"Entities\HotelElGr", "HotelLang", 
-			\Doctrine\ORM\Query\Expr\Join::WITH,
-			"HotelLang = Hotel" 
-		);
-			
+		if ($lang){
+			$qb->leftJoin(
+				"Entities\Hotel{$lang}", "HotelLang", 
+				\Doctrine\ORM\Query\Expr\Join::WITH,
+				"HotelLang.id = Hotel.id"
+			);
+		}
 		
 		$qb->innerJoin(
 			"Entities\RegionHotelMapping", "HotelRegionMapping",
@@ -60,11 +63,18 @@ class HotelRepository extends EntityRepository
 		);
 		
 		$qb->andWhere("HotelRegionMapping.regionID in (:regions)");
-		$qb->setParameter('regions', array(800001));
+		$qb->setParameter('regions', $regionIDList);
 		
-		//$result = $qb->setMaxResults(200)->getQuery();
+		if(true){
+			//$qb->addOrderBy('Hotel.highRate', 'ASC');
+			//$qb->addOrderBy('Hotel.confidence', 'ASC');
+			$qb->addOrderBy('Hotel.starRating', 'ASC');
+		}
+		
+		$results = $qb->setMaxResults(100)->getQuery()->getResult();
+		/*
 		$paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($qb->getQuery(), $fetchJoinCollection = true);
-		$pageSize = 50;
+		$pageSize = 500;
 		$totalItems = count($paginator);
 		$pagesCount = ceil($totalItems / $pageSize);
 		
@@ -73,15 +83,15 @@ class HotelRepository extends EntityRepository
 					->setMaxResults($pageSize)
 					->getResult();
 		
-		//$return = new \stdClass();
-		return $paginator;
+		*/
 		
-		//return $return;
+		return $results;
 		
 		
 		//return $result->getResult();
 	}
 	
+	/*
 	public function getHotelAmenities(){
 		
 		$em = $this->_em;
@@ -127,5 +137,134 @@ class HotelRepository extends EntityRepository
 		$result = $qb->setMaxResults(200)->getQuery();
 		
 		return $result->getResult();
-	} 
+	}
+	*/
+	/**/
+	
+	public function getAmenitiesForHotel($hotelID, $type = "", $subType = "", $lang = "ElGr"){
+
+		$attributes = "Entities\HotelAttribute{$lang}";
+		$attributesLink = "Entities\AttributeHotelMapping{$lang}";
+		
+		$em = $this->_em;
+
+		$qb = $em->createQueryBuilder();
+	
+		
+		if ($lang) {
+			$qb->addSelect("AttributeLang.description");
+			$qb->addSelect("AttributeLinkLang.appendTxt");
+			
+		} else {
+			$qb->addSelect("Attribute.description");
+			$qb->addSelect("AttributeLink.appendTxt");
+		}
+
+		$qb->addSelect("Attribute.type");
+		$qb->addSelect("Attribute.subType");
+		
+			
+		$qb->from("Entities\HotelAttribute", "Attribute");
+
+		if ($lang) {
+
+			$qb->leftJoin(
+				"Entities\HotelAttribute{$lang}", "AttributeLang",
+				\Doctrine\ORM\Query\Expr\Join::WITH,
+				"AttributeLang.id = Attribute.id"
+			);
+		}
+		
+		if ($lang) {
+			$qb->innerJoin(
+				"Entities\AttributeHotelMapping{$lang}", "AttributeLinkLang",
+				\Doctrine\ORM\Query\Expr\Join::WITH,
+				"AttributeLinkLang.attributeID = AttributeLang.id"
+			);
+		} else {
+			$qb->innerJoin(
+				"Entities\AttributeHotelMapping", "AttributeLink",
+				\Doctrine\ORM\Query\Expr\Join::WITH,
+				"AttributeLink.attributeID = Attribute.id"
+			);
+		}
+		
+		$attributeLink = "AttributeLink";
+		if ($lang){
+			$attributeLink = "AttributeLinkLang";
+		}
+		
+		$qb->innerJoin(
+			"Entities\Hotel", "Hotel",
+			\Doctrine\ORM\Query\Expr\Join::WITH,
+			"Hotel.id = {$attributeLink}.eanHotelID"
+		);
+
+		$qb->andWhere("Hotel.id = :hotelID");
+		$qb->setParameter('hotelID', $hotelID);
+		
+		if ($type){
+			$qb->andWhere("Attribute.type = :type");
+			$qb->setParameter('type', $type);
+		}
+		
+		if ($subType){
+			$qb->andWhere("Attribute.subType = :subType");
+			$qb->setParameter('subType', $subType);
+		}
+		
+
+		$result = $qb->getQuery();
+		
+		return $result->getResult();
+	}
+	
+	public function getPointsOfInterestsForHotel($hotelID, $lang = "ElGr"){
+
+		$em = $this->_em;
+
+		$qb = $em->createQueryBuilder();
+
+		if ($lang){
+			$region = "RegionLang";
+		}
+		else {
+			$region = "Region";
+		}
+		
+		$qb->select("{$region}.name, 
+					{$region}.nameLong, 
+					PointOfInterest.latitude, 
+					PointOfInterest.longitude");
+
+		$qb->from("Entities\Region", "Region");
+
+		if ($lang){
+			$qb->innerJoin(
+				"Entities\Region{$lang}", "RegionLang",
+				\Doctrine\ORM\Query\Expr\Join::WITH,
+				"RegionLang.id = Region.id"
+			);
+		}
+
+		$qb->innerJoin(
+			"Entities\PointOfInterest", "PointOfInterest",
+			\Doctrine\ORM\Query\Expr\Join::WITH,
+			"PointOfInterest.id = Region.id"
+		);
+
+		$qb->innerJoin(
+			"Entities\Hotel", "Hotel",
+			\Doctrine\ORM\Query\Expr\Join::WITH,
+			"Hotel.regionID = Region.parentID"
+		);
+
+		$qb->andWhere("Hotel.id = :hotelID");
+
+		$qb->setParameter('hotelID', $hotelID);
+
+		$result = $qb->getQuery();
+
+		return $result->getResult();
+	}
 }

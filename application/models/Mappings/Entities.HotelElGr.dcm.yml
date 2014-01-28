@@ -14,4 +14,23 @@ Entities\HotelElGr:
   checkInTime:
    column: CheckInTime
   checkOutTime:
-   column: CheckOutTime             
+   column: CheckOutTime
+ oneToOne:
+  description:
+   targetEntity: HotelDescriptionElGr
+   mappedBy: hotel
+  policy:
+   targetEntity: HotelPolicyElGr
+   mappedBy: hotel
+  areaAttractions:
+   targetEntity: HotelAreaAttractionElGr
+   mappedBy: hotel
+  whatToExpect:
+   targetEntity: HotelWhatToExpectElGr
+   mappedBy: hotel
+  spaDescription:
+   targetEntity: HotelSpaDescriptionElGr
+   mappedBy: hotel
+  diningDescription:
+   targetEntity: HotelDiningDescriptionElGr
+   mappedBy: hotel              

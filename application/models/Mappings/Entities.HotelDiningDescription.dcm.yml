@@ -1,0 +1,17 @@
+Entities\HotelDiningDescription:
+ type: entity
+ table: diningdescriptionlist
+ id:
+  id: 
+   type: integer
+   column: EANHotelID
+ fields:
+  diningDescription:
+   column: DiningDescription
+ oneToOne: 
+  hotel:
+   targetEntity: Hotel
+   inversedBy: diningDescription
+   joinColumn:
+    name: EANHotelID
+    referencedColumnName: EANHotelID

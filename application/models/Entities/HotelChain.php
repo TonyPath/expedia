@@ -5,9 +5,9 @@ namespace Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * HotelAttribute
+ * HotelChain
  */
-class HotelAttribute
+class HotelChain
 {
     /**
      * @var integer
@@ -17,7 +17,7 @@ class HotelAttribute
     /**
      * @var string
      */
-    private $description;
+    private $name;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -36,7 +36,7 @@ class HotelAttribute
      * Set id
      *
      * @param integer $id
-     * @return HotelAttribute
+     * @return HotelChain
      */
     public function setId($id)
     {
@@ -56,35 +56,35 @@ class HotelAttribute
     }
 
     /**
-     * Set description
+     * Set name
      *
-     * @param string $description
-     * @return HotelAttribute
+     * @param string $name
+     * @return HotelChain
      */
-    public function setDescription($description)
+    public function setName($name)
     {
-        $this->description = $description;
+        $this->name = $name;
     
         return $this;
     }
 
     /**
-     * Get description
+     * Get name
      *
      * @return string 
      */
-    public function getDescription()
+    public function getName()
     {
-        return $this->description;
+        return $this->name;
     }
 
     /**
      * Add hotels
      *
-     * @param \Entities\AttributeHotelMapping $hotels
-     * @return HotelAttribute
+     * @param \Entities\Hotel $hotels
+     * @return HotelChain
      */
-    public function addHotel(\Entities\AttributeHotelMapping $hotels)
+    public function addHotel(\Entities\Hotel $hotels)
     {
         $this->hotels[] = $hotels;
     
@@ -94,9 +94,9 @@ class HotelAttribute
     /**
      * Remove hotels
      *
-     * @param \Entities\AttributeHotelMapping $hotels
+     * @param \Entities\Hotel $hotels
      */
-    public function removeHotel(\Entities\AttributeHotelMapping $hotels)
+    public function removeHotel(\Entities\Hotel $hotels)
     {
         $this->hotels->removeElement($hotels);
     }

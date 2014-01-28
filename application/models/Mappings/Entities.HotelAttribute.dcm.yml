@@ -16,7 +16,11 @@ Entities\HotelAttribute:
  fields:
   description:
    column: AttributeDesc
+  type:
+   column: Type
+  subType:
+   column: SubType   
  oneToMany: 
   hotels:
    targetEntity: AttributeHotelMapping
-   mappedBy: attribute    
+   mappedBy: attribute 

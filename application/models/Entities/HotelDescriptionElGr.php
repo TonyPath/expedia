@@ -5,9 +5,9 @@ namespace Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * HotelAttributeElGr
+ * HotelDescriptionElGr
  */
-class HotelAttributeElGr
+class HotelDescriptionElGr
 {
     /**
      * @var integer
@@ -19,12 +19,17 @@ class HotelAttributeElGr
      */
     private $description;
 
+    /**
+     * @var \Entities\HotelElGr
+     */
+    private $hotel;
+
 
     /**
      * Set id
      *
      * @param integer $id
-     * @return HotelAttributeElGr
+     * @return HotelDescriptionElGr
      */
     public function setId($id)
     {
@@ -47,7 +52,7 @@ class HotelAttributeElGr
      * Set description
      *
      * @param string $description
-     * @return HotelAttributeElGr
+     * @return HotelDescriptionElGr
      */
     public function setDescription($description)
     {
@@ -64,5 +69,28 @@ class HotelAttributeElGr
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set hotel
+     *
+     * @param \Entities\HotelElGr $hotel
+     * @return HotelDescriptionElGr
+     */
+    public function setHotel(\Entities\HotelElGr $hotel = null)
+    {
+        $this->hotel = $hotel;
+    
+        return $this;
+    }
+
+    /**
+     * Get hotel
+     *
+     * @return \Entities\HotelElGr 
+     */
+    public function getHotel()
+    {
+        return $this->hotel;
     }
 }

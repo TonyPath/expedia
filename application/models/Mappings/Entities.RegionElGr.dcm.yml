@@ -1,0 +1,12 @@
+Entities\RegionElGr:
+ type: entity
+ table: regionlist_el_gr
+ id:
+  id: 
+   type: integer
+   column: RegionID
+ fields:
+  name:
+   column: RegionName
+  nameLong:
+   column: RegionNameLong
