@@ -61,6 +61,10 @@ class Doctrine
             'dbname' => $db['default']['database']
         );
         
+        
+        $config->addCustomStringFunction('FIELD', 'DoctrineExtensions\Query\Mysql\Field');
+        $config->addCustomStringFunction('GROUP_CONCAT', 'DoctrineExtensions\Query\Mysql\GroupConcat');
+        
         // create the EntityManager
         $em = \Doctrine\ORM\EntityManager::create($connectionOptions, $config);
         

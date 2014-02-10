@@ -21,8 +21,9 @@ class Welcome extends CI_Controller {
 	{
 		header('Content-Type: text/html; charset=utf-8');
 		
-		$r = $this->doctrine->em->getRepository('Entities\Hotel')->getHotels( array(178231), "ElGr" );
+		$r = $this->doctrine->em->getRepository('Entities\Hotel')->getHotels( array(2734), "ElGr" );
 		Zend\Debug\Debug::dump($r);
+		//echo $r[0]['hotelIDList'];
 		
 		exit;
 		$r = $this->doctrine->em->getRepository('Entities\Hotel')->getAmenitiesForHotel(182141);

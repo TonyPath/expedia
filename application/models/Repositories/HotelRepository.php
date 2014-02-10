@@ -34,20 +34,19 @@ class HotelRepository extends EntityRepository
 	public function getHotels($regionIDList = null, $lang = "ElGr"){
 
 		$em = $this->_em;
-		$doctrineConfig = $em->getConfiguration();
-		$doctrineConfig->addCustomStringFunction('FIELD', 'DoctrineExtensions\Query\Mysql\Field');
 
 		$qb = $em->createQueryBuilder();
 
+		
 		$qb->select("Hotel as hotel");
-		
-		$qb->addSelect("Field(Hotel.supplierType, 'ESR','EEM','GDS') as HIDDEN supplier");
-		
+			
 		if ($lang){
 			$qb->addSelect("COALESCE(HotelLang.name, Hotel.name) AS name");
 			$qb->addSelect("COALESCE(HotelLang.location, Hotel.location) AS location");
 		}
 		
+		
+		$qb->addSelect("Field(Hotel.supplierType, 'ESR','EEM','GDS') as HIDDEN supplier");
 		
 		$qb->from("Entities\Hotel", "Hotel");
 		
@@ -78,12 +77,20 @@ class HotelRepository extends EntityRepository
 		}
 		
 		
-		//print_r($qb->getQuery()->getAST());
 		
-		$results = $qb->setMaxResults(100)->getQuery()->getResult();
+		//print_r($qb->getQuery()->getAST());
 		/*
+		$results = $qb
+				->setMaxResults(10)
+				->setFirstResult(0)
+				->getQuery()
+				->getResult();
+				*/
+		
+		//echo $qb->getQuery()->getSQL();
+		
 		$paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($qb->getQuery(), $fetchJoinCollection = true);
-		$pageSize = 500;
+		$pageSize = 50;
 		$totalItems = count($paginator);
 		$pagesCount = ceil($totalItems / $pageSize);
 		
@@ -92,11 +99,9 @@ class HotelRepository extends EntityRepository
 					->setMaxResults($pageSize)
 					->getResult();
 		
-		*/
+		
 		
 		return $results;
-		
-		
 		//return $result->getResult();
 	}
 	
