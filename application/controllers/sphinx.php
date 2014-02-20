@@ -26,18 +26,19 @@ class Sphinx extends CI_Controller {
 		
 		//$this->sphinxclient->SetArrayResult( true );
 		$this->sphinxclient->SetLimits(0,5);
-		$this->sphinxclient->SetMatchMode ( SPH_MATCH_EXTENDED2 );
-		$this->sphinxclient->SetFilter( 'RegionType', 'City' );
+		$this->sphinxclient->SetMatchMode ( SPH_MATCH_EXTENDED2   );
+		$this->sphinxclient->SetRankingMode ( SPH_RANK_PROXIMITY );
+		//$this->sphinxclient->SetFilter( 'RegionType', array(crc32(strtolower( 'Multi-City (Vicinity)' ))) );
 		
-		$results = $this->sphinxclient->Query("paris","idx_regions");
+		$results = $this->sphinxclient->Query("paris", "idx_cities");
 		
 		//$result_array = $this->sphinxclient->runQueries();
-		//Zend\Debug\Debug::dump($results);
+		Zend\Debug\Debug::dump($results);
 		
 		foreach($results['matches'] as $id=>$info){
 			
 			$region = $this->doctrine->em->find('Entities\Region', $id);
-			echo $region->getName()."/".$region->getNameLong()."/". $region->getType() ."<br>";
+			echo $region->getName()."   /".$region->getNameLong()."  /". $region->getType() ."<br>";
 		}
 		
 		
