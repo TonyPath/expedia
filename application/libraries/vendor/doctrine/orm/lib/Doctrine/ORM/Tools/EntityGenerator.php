@@ -59,7 +59,7 @@ class EntityGenerator
     /**
      * @var bool
      */
-    private $backupExisting = true;
+    private $backupExisting = false;
 
     /**
      * The extension to use for written php files

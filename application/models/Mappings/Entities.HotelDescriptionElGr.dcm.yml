@@ -1,0 +1,18 @@
+Entities\HotelDescriptionElGr:
+ type: entity
+ table: propertydescriptionlist_el_gr
+ id:
+  id: 
+   type: integer
+   column: EANHotelID
+ fields:
+  description:
+   column: PropertyDescription
+ oneToOne: 
+  hotel:
+   targetEntity: HotelElGr
+   inversedBy: description
+   joinColumn:
+    name: EANHotelID
+    referencedColumnName: EANHotelID
+   

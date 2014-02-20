@@ -20,6 +20,16 @@ class HotelAttribute
     private $description;
 
     /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var string
+     */
+    private $subType;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $hotels;
@@ -76,6 +86,52 @@ class HotelAttribute
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return HotelAttribute
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set subType
+     *
+     * @param string $subType
+     * @return HotelAttribute
+     */
+    public function setSubType($subType)
+    {
+        $this->subType = $subType;
+    
+        return $this;
+    }
+
+    /**
+     * Get subType
+     *
+     * @return string 
+     */
+    public function getSubType()
+    {
+        return $this->subType;
     }
 
     /**

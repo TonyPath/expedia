@@ -25,6 +25,41 @@ class Region
     private $nameLong;
 
     /**
+     * @var string
+     */
+    private $subClass;
+
+    /**
+     * @var string
+     */
+    private $type;
+
+    /**
+     * @var integer
+     */
+    private $parentID;
+
+    /**
+     * @var string
+     */
+    private $parentType;
+
+    /**
+     * @var string
+     */
+    private $parentName;
+
+    /**
+     * @var string
+     */
+    private $parentNameLong;
+
+    /**
+     * @var \Entities\RegionCenterCoordinates
+     */
+    private $coordinates;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $hotels;
@@ -104,6 +139,167 @@ class Region
     public function getNameLong()
     {
         return $this->nameLong;
+    }
+
+    /**
+     * Set subClass
+     *
+     * @param string $subClass
+     * @return Region
+     */
+    public function setSubClass($subClass)
+    {
+        $this->subClass = $subClass;
+    
+        return $this;
+    }
+
+    /**
+     * Get subClass
+     *
+     * @return string 
+     */
+    public function getSubClass()
+    {
+        return $this->subClass;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return Region
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set parentID
+     *
+     * @param integer $parentID
+     * @return Region
+     */
+    public function setParentID($parentID)
+    {
+        $this->parentID = $parentID;
+    
+        return $this;
+    }
+
+    /**
+     * Get parentID
+     *
+     * @return integer 
+     */
+    public function getParentID()
+    {
+        return $this->parentID;
+    }
+
+    /**
+     * Set parentType
+     *
+     * @param string $parentType
+     * @return Region
+     */
+    public function setParentType($parentType)
+    {
+        $this->parentType = $parentType;
+    
+        return $this;
+    }
+
+    /**
+     * Get parentType
+     *
+     * @return string 
+     */
+    public function getParentType()
+    {
+        return $this->parentType;
+    }
+
+    /**
+     * Set parentName
+     *
+     * @param string $parentName
+     * @return Region
+     */
+    public function setParentName($parentName)
+    {
+        $this->parentName = $parentName;
+    
+        return $this;
+    }
+
+    /**
+     * Get parentName
+     *
+     * @return string 
+     */
+    public function getParentName()
+    {
+        return $this->parentName;
+    }
+
+    /**
+     * Set parentNameLong
+     *
+     * @param string $parentNameLong
+     * @return Region
+     */
+    public function setParentNameLong($parentNameLong)
+    {
+        $this->parentNameLong = $parentNameLong;
+    
+        return $this;
+    }
+
+    /**
+     * Get parentNameLong
+     *
+     * @return string 
+     */
+    public function getParentNameLong()
+    {
+        return $this->parentNameLong;
+    }
+
+    /**
+     * Set coordinates
+     *
+     * @param \Entities\RegionCenterCoordinates $coordinates
+     * @return Region
+     */
+    public function setCoordinates(\Entities\RegionCenterCoordinates $coordinates = null)
+    {
+        $this->coordinates = $coordinates;
+    
+        return $this;
+    }
+
+    /**
+     * Get coordinates
+     *
+     * @return \Entities\RegionCenterCoordinates 
+     */
+    public function getCoordinates()
+    {
+        return $this->coordinates;
     }
 
     /**

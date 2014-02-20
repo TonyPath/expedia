@@ -1,0 +1,17 @@
+Entities\HotelWhatToExpect:
+ type: entity
+ table: whattoexpectlist
+ id:
+  id: 
+   type: integer
+   column: EANHotelID
+ fields:
+  whatToExpect:
+   column: WhatToExpect
+ oneToOne: 
+  hotel:
+   targetEntity: Hotel
+   inversedBy: whatToExpect
+   joinColumn:
+    name: EANHotelID
+    referencedColumnName: EANHotelID

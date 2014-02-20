@@ -1,0 +1,15 @@
+Entities\HotelChain:
+ type: entity
+ table: chainlist
+ id:
+  id:
+   type: integer
+   column: ChainCodeID
+ fields:
+  name:
+   column: ChainName
+ oneToMany:
+  hotels:
+   targetEntity: Hotel
+   mappedBy: chain
+   

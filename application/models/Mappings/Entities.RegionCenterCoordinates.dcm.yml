@@ -1,0 +1,23 @@
+Entities\RegionCenterCoordinates:
+ type: entity
+ table: regioncentercoordinateslist
+ id:
+  id: 
+   type: integer
+   column: RegionID
+ fields:
+  name:
+   column: RegionName
+  latitude:
+   column: CenterLatitude
+  longitude:
+   column: CenterLongitude   
+ oneToOne: 
+  region:
+   targetEntity: Region
+   inversedBy: coordinates
+   joinColumn:
+    name: RegionID
+    referencedColumnName: RegionID
+   
+  

@@ -34,6 +34,36 @@ class HotelElGr
      */
     private $checkOutTime;
 
+    /**
+     * @var \Entities\HotelDescriptionElGr
+     */
+    private $description;
+
+    /**
+     * @var \Entities\HotelPolicyElGr
+     */
+    private $policy;
+
+    /**
+     * @var \Entities\HotelAreaAttractionElGr
+     */
+    private $areaAttractions;
+
+    /**
+     * @var \Entities\HotelWhatToExpectElGr
+     */
+    private $whatToExpect;
+
+    /**
+     * @var \Entities\HotelSpaDescriptionElGr
+     */
+    private $spaDescription;
+
+    /**
+     * @var \Entities\HotelDiningDescriptionElGr
+     */
+    private $diningDescription;
+
 
     /**
      * Set id
@@ -148,5 +178,143 @@ class HotelElGr
     public function getCheckOutTime()
     {
         return $this->checkOutTime;
+    }
+
+    /**
+     * Set description
+     *
+     * @param \Entities\HotelDescriptionElGr $description
+     * @return HotelElGr
+     */
+    public function setDescription(\Entities\HotelDescriptionElGr $description = null)
+    {
+        $this->description = $description;
+    
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return \Entities\HotelDescriptionElGr 
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set policy
+     *
+     * @param \Entities\HotelPolicyElGr $policy
+     * @return HotelElGr
+     */
+    public function setPolicy(\Entities\HotelPolicyElGr $policy = null)
+    {
+        $this->policy = $policy;
+    
+        return $this;
+    }
+
+    /**
+     * Get policy
+     *
+     * @return \Entities\HotelPolicyElGr 
+     */
+    public function getPolicy()
+    {
+        return $this->policy;
+    }
+
+    /**
+     * Set areaAttractions
+     *
+     * @param \Entities\HotelAreaAttractionElGr $areaAttractions
+     * @return HotelElGr
+     */
+    public function setAreaAttractions(\Entities\HotelAreaAttractionElGr $areaAttractions = null)
+    {
+        $this->areaAttractions = $areaAttractions;
+    
+        return $this;
+    }
+
+    /**
+     * Get areaAttractions
+     *
+     * @return \Entities\HotelAreaAttractionElGr 
+     */
+    public function getAreaAttractions()
+    {
+        return $this->areaAttractions;
+    }
+
+    /**
+     * Set whatToExpect
+     *
+     * @param \Entities\HotelWhatToExpectElGr $whatToExpect
+     * @return HotelElGr
+     */
+    public function setWhatToExpect(\Entities\HotelWhatToExpectElGr $whatToExpect = null)
+    {
+        $this->whatToExpect = $whatToExpect;
+    
+        return $this;
+    }
+
+    /**
+     * Get whatToExpect
+     *
+     * @return \Entities\HotelWhatToExpectElGr 
+     */
+    public function getWhatToExpect()
+    {
+        return $this->whatToExpect;
+    }
+
+    /**
+     * Set spaDescription
+     *
+     * @param \Entities\HotelSpaDescriptionElGr $spaDescription
+     * @return HotelElGr
+     */
+    public function setSpaDescription(\Entities\HotelSpaDescriptionElGr $spaDescription = null)
+    {
+        $this->spaDescription = $spaDescription;
+    
+        return $this;
+    }
+
+    /**
+     * Get spaDescription
+     *
+     * @return \Entities\HotelSpaDescriptionElGr 
+     */
+    public function getSpaDescription()
+    {
+        return $this->spaDescription;
+    }
+
+    /**
+     * Set diningDescription
+     *
+     * @param \Entities\HotelDiningDescriptionElGr $diningDescription
+     * @return HotelElGr
+     */
+    public function setDiningDescription(\Entities\HotelDiningDescriptionElGr $diningDescription = null)
+    {
+        $this->diningDescription = $diningDescription;
+    
+        return $this;
+    }
+
+    /**
+     * Get diningDescription
+     *
+     * @return \Entities\HotelDiningDescriptionElGr 
+     */
+    public function getDiningDescription()
+    {
+        return $this->diningDescription;
     }
 }

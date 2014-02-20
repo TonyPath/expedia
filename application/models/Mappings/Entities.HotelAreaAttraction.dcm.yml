@@ -1,0 +1,19 @@
+Entities\HotelAreaAttraction:
+ type: entity
+ table: areaattractionslist
+ id:
+  id: 
+   type: integer
+   column: EANHotelID
+ fields:
+  areaAttractions:
+   column: AreaAttractions
+ oneToOne: 
+  hotel:
+   targetEntity: Hotel
+   inversedBy: areaAttractions
+   joinColumn:
+    name: EANHotelID
+    referencedColumnName: EANHotelID
+   
+  

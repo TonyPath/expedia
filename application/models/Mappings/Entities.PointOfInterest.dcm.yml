@@ -1,0 +1,18 @@
+Entities\PointOfInterest:
+ type: entity
+ table: pointsofinterestcoordinateslist
+ id:
+  id:
+   type: integer
+   column: RegionID
+ fields:
+  name:
+   column: RegionName
+  nameLong:
+   column: RegionNameLong
+  latitude:
+   column: Latitude
+  longitude:
+   column: Longitude
+  classification: 
+   column: SubClassification

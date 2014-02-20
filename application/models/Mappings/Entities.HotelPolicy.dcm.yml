@@ -1,0 +1,19 @@
+Entities\HotelPolicy:
+ type: entity
+ table: policydescriptionlist
+ id:
+  id: 
+   type: integer
+   column: EANHotelID
+ fields:
+  description:
+   column: PolicyDescription
+ oneToOne: 
+  hotel:
+   targetEntity: Hotel
+   inversedBy: policy
+   joinColumn:
+    name: EANHotelID
+    referencedColumnName: EANHotelID
+   
+  

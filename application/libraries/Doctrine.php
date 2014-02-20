@@ -25,6 +25,10 @@ class Doctrine
         $repoClassLoader = new \Doctrine\Common\ClassLoader('Repositories', APPPATH.'models');
         $repoClassLoader->register();
         
+        // load the repo entities
+        $doctrineExtentionsClassLoader = new \Doctrine\Common\ClassLoader('DoctrineExtensions', APPPATH.'libraries');
+        $doctrineExtentionsClassLoader->register();
+        
         // set up the configuration 
         $config = new \Doctrine\ORM\Configuration;
 
@@ -56,6 +60,10 @@ class Doctrine
             'host' => $db['default']['hostname'],
             'dbname' => $db['default']['database']
         );
+        
+        
+        $config->addCustomStringFunction('FIELD', 'DoctrineExtensions\Query\Mysql\Field');
+        $config->addCustomStringFunction('GROUP_CONCAT', 'DoctrineExtensions\Query\Mysql\GroupConcat');
         
         // create the EntityManager
         $em = \Doctrine\ORM\EntityManager::create($connectionOptions, $config);

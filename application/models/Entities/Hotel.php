@@ -110,6 +110,41 @@ class Hotel
     private $checkOutTime;
 
     /**
+     * @var integer
+     */
+    private $regionID;
+
+    /**
+     * @var \Entities\HotelDescription
+     */
+    private $description;
+
+    /**
+     * @var \Entities\HotelPolicy
+     */
+    private $policy;
+
+    /**
+     * @var \Entities\HotelAreaAttraction
+     */
+    private $areaAttractions;
+
+    /**
+     * @var \Entities\HotelWhatToExpect
+     */
+    private $whatToExpect;
+
+    /**
+     * @var \Entities\HotelSpaDescription
+     */
+    private $spaDescription;
+
+    /**
+     * @var \Entities\HotelDiningDescription
+     */
+    private $diningDescription;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $regions;
@@ -128,6 +163,11 @@ class Hotel
      * @var \Entities\HotelType
      */
     private $category;
+
+    /**
+     * @var \Entities\HotelChain
+     */
+    private $chain;
 
     /**
      * Constructor
@@ -600,6 +640,167 @@ class Hotel
     }
 
     /**
+     * Set regionID
+     *
+     * @param integer $regionID
+     * @return Hotel
+     */
+    public function setRegionID($regionID)
+    {
+        $this->regionID = $regionID;
+    
+        return $this;
+    }
+
+    /**
+     * Get regionID
+     *
+     * @return integer 
+     */
+    public function getRegionID()
+    {
+        return $this->regionID;
+    }
+
+    /**
+     * Set description
+     *
+     * @param \Entities\HotelDescription $description
+     * @return Hotel
+     */
+    public function setDescription(\Entities\HotelDescription $description = null)
+    {
+        $this->description = $description;
+    
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return \Entities\HotelDescription 
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set policy
+     *
+     * @param \Entities\HotelPolicy $policy
+     * @return Hotel
+     */
+    public function setPolicy(\Entities\HotelPolicy $policy = null)
+    {
+        $this->policy = $policy;
+    
+        return $this;
+    }
+
+    /**
+     * Get policy
+     *
+     * @return \Entities\HotelPolicy 
+     */
+    public function getPolicy()
+    {
+        return $this->policy;
+    }
+
+    /**
+     * Set areaAttractions
+     *
+     * @param \Entities\HotelAreaAttraction $areaAttractions
+     * @return Hotel
+     */
+    public function setAreaAttractions(\Entities\HotelAreaAttraction $areaAttractions = null)
+    {
+        $this->areaAttractions = $areaAttractions;
+    
+        return $this;
+    }
+
+    /**
+     * Get areaAttractions
+     *
+     * @return \Entities\HotelAreaAttraction 
+     */
+    public function getAreaAttractions()
+    {
+        return $this->areaAttractions;
+    }
+
+    /**
+     * Set whatToExpect
+     *
+     * @param \Entities\HotelWhatToExpect $whatToExpect
+     * @return Hotel
+     */
+    public function setWhatToExpect(\Entities\HotelWhatToExpect $whatToExpect = null)
+    {
+        $this->whatToExpect = $whatToExpect;
+    
+        return $this;
+    }
+
+    /**
+     * Get whatToExpect
+     *
+     * @return \Entities\HotelWhatToExpect 
+     */
+    public function getWhatToExpect()
+    {
+        return $this->whatToExpect;
+    }
+
+    /**
+     * Set spaDescription
+     *
+     * @param \Entities\HotelSpaDescription $spaDescription
+     * @return Hotel
+     */
+    public function setSpaDescription(\Entities\HotelSpaDescription $spaDescription = null)
+    {
+        $this->spaDescription = $spaDescription;
+    
+        return $this;
+    }
+
+    /**
+     * Get spaDescription
+     *
+     * @return \Entities\HotelSpaDescription 
+     */
+    public function getSpaDescription()
+    {
+        return $this->spaDescription;
+    }
+
+    /**
+     * Set diningDescription
+     *
+     * @param \Entities\HotelDiningDescription $diningDescription
+     * @return Hotel
+     */
+    public function setDiningDescription(\Entities\HotelDiningDescription $diningDescription = null)
+    {
+        $this->diningDescription = $diningDescription;
+    
+        return $this;
+    }
+
+    /**
+     * Get diningDescription
+     *
+     * @return \Entities\HotelDiningDescription 
+     */
+    public function getDiningDescription()
+    {
+        return $this->diningDescription;
+    }
+
+    /**
      * Add regions
      *
      * @param \Entities\RegionHotelMapping $regions
@@ -719,5 +920,56 @@ class Hotel
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * Set chain
+     *
+     * @param \Entities\HotelChain $chain
+     * @return Hotel
+     */
+    public function setChain(\Entities\HotelChain $chain = null)
+    {
+        $this->chain = $chain;
+    
+        return $this;
+    }
+
+    /**
+     * Get chain
+     *
+     * @return \Entities\HotelChain 
+     */
+    public function getChain()
+    {
+        return $this->chain;
+    }
+    /**
+     * @var integer
+     */
+    private $sequenceNumber;
+
+
+    /**
+     * Set sequenceNumber
+     *
+     * @param integer $sequenceNumber
+     * @return Hotel
+     */
+    public function setSequenceNumber($sequenceNumber)
+    {
+        $this->sequenceNumber = $sequenceNumber;
+    
+        return $this;
+    }
+
+    /**
+     * Get sequenceNumber
+     *
+     * @return integer 
+     */
+    public function getSequenceNumber()
+    {
+        return $this->sequenceNumber;
     }
 }
