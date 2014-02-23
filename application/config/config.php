@@ -14,7 +14,12 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/expedia';
+$config['base_url']	= 'http://hotel.loc';
+
+$config["debug"]     = true; // Debug mode enables firephp and minify debug
+$config["cache"]     = false; // Allow caching
+$config["minifyUrl"] = "min/"; // Minify url, relative to baseurl
+$config["cacheDate"] = "20110413"; // Cache date for scripts & styles
 
 /*
 |--------------------------------------------------------------------------

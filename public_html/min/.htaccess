@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule ^([a-z]=.*)  index.php?$1  [L,NE]
+</IfModule>
+
+
+
+Header unset ETag
+FileETag None
+Header unset Cache-Control
+
+Header unset vary
+Header unset Last-Modified
+Header unset Content-Disposition
+
+
+
+
+IndexIgnore *
+Options -Indexes

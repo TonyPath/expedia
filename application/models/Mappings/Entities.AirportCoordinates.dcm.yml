@@ -1,0 +1,16 @@
+Entities\AirportCoordinates:
+ type: entity
+ table: airportcoordinateslist
+ id:
+  id: 
+   type: integer
+   column: AirportID
+ fields:
+  name:
+   column: AirportName
+  code:
+   column: AirportCode
+  latitude:
+   column: Latitude
+  longitude:
+   column: Longitude    

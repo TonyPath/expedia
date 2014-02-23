@@ -56,7 +56,7 @@ class SrvEanApi {
 		);
 		
 		$postData = array_merge($requestData, $json);
-	
+			
 		$this->client->setUri($url);
 			
 		$this->client->setMethod($method);
@@ -265,6 +265,162 @@ class SrvEanApi {
 				);
 			}
 		}
+	}
+	
+	
+	public function processListResponce($listResponse){
+		
+		$response = $listResponse->HotelListResponse;
+		$results = array();
+		$hotels = array();
+		
+		//$results['searchCriteria'] =  $requestParams;
+		
+		if ($response->HotelList->size > 0){
+				
+			if ($response->HotelList->size == 1){
+				$hotelList = array(0=>$response->HotelList->HotelSummary);
+			} else{
+				$hotelList = $response->HotelList->HotelSummary;
+			}
+				
+			foreach ($hotelList as $hotel){
+					
+				if (true){
+		
+					$objHotel = new stdClass();
+						
+					if (isset($hotel->RoomRateDetailsList)){
+						$rateInfo = $hotel->RoomRateDetailsList->RoomRateDetails->RateInfos->RateInfo;
+						$chargeableRateInfo = $rateInfo->ChargeableRateInfo;
+						$numberOfRoomsRequested = count($rateInfo->RoomGroup->Room);
+					}
+						
+					$objHotel = new stdClass();
+						
+					$objHotel->id = $hotel->hotelId;
+						
+					$objHotel->name = $hotel->name;
+						
+					$objHotel->address = $hotel->address1;
+						
+					$objHotel->city = $hotel->city;
+						
+					$objHotel->rating = $hotel->hotelRating;
+						
+					$objHotel->highRate = $hotel->highRate;
+						
+					$objHotel->lowRate = $hotel->lowRate;
+						
+					$objHotel->latitude = $hotel->latitude;
+						
+					$objHotel->longitude = $hotel->longitude;
+						
+					if (isset($hotel->airportCode)){
+						$objHotel->airportCode = $hotel->airportCode;
+					}
+		
+					$objHotel->category = $hotel->propertyCategory;
+						
+					$objHotel->shortDescription = $hotel->shortDescription;
+						
+					$objHotel->amenityMask = $hotel->amenityMask;
+						
+					$objHotel->maskedAmenities = '';
+						
+					$objHotel->currency = (string) $hotel->rateCurrencyCode;
+		
+					if (isset($hotel->locationDescription)){
+						$objHotel->locationDescription = $hotel->locationDescription;
+					}
+
+					if (isset($chargeableRateInfo)){
+							
+						$objPromoRoom = new stdClass();
+						$objPromoRoom->ratesInfo = new stdClass();
+						$objPromoRoom->ratesInfo->isPromo = false;
+		
+						$objPromoRoom->ratesInfo->allRoomsAllDays = new stdClass();
+		
+						if (isset($rateInfo) && isset($rateInfo->promo) && $rateInfo->promo === "true"){
+		
+							$objPromoRoom->ratesInfo->isPromo = true;
+							//$objPromoRoom->ratesInfo->promoDescription = $rateInfo->promoDescription || "";
+							$objPromoRoom->ratesInfo->promoDescription = "";
+						}
+		
+						$objPromoRoom->ratesInfo->surchargeTotal = @ $chargeableRateInfo->surchargeTotal;
+							
+							
+						if (isset($chargeableRateInfo->NightlyRatesPerRoom) && isset($chargeableRateInfo->NightlyRatesPerRoom->NightlyRate)){
+								
+							if (is_array($chargeableRateInfo->NightlyRatesPerRoom->NightlyRate)){
+								$numberOfNights = count($chargeableRateInfo->NightlyRatesPerRoom->NightlyRate);
+							}
+							elseif (is_object($chargeableRateInfo->NightlyRatesPerRoom->NightlyRate)){
+								$numberOfNights = 1;
+							}
+								
+							$surchargeAvg =  $objPromoRoom->ratesInfo->surchargeTotal / $numberOfNights;
+								
+							foreach($chargeableRateInfo->NightlyRatesPerRoom->NightlyRate as $nightlyRate  ) {
+		
+								$objPromoRoom->ratesInfo->allRoomsAllDays->totalPriceBreakdownPerDay[] = (object) array(
+										"promo" => $nightlyRate->promo,
+										"rate" => ($nightlyRate->rate * $numberOfRoomsRequested) + $surchargeAvg,
+										"baseRate" =>  ($nightlyRate->baseRate * $numberOfRoomsRequested) + $surchargeAvg );
+									
+								$objPromoRoom->ratesInfo->allRoomsAllDays->totalBasePrice += $nightlyRate->baseRate;
+									
+								$objPromoRoom->ratesInfo->allRoomsAllDays->totalPrice += $nightlyRate->rate;
+							}
+						}
+						else {
+							continue;
+						}
+		
+						$objPromoRoom->ratesInfo->allRoomsAllDays->totalBasePrice *= $response->numberOfRoomsRequested;
+						$objPromoRoom->ratesInfo->allRoomsAllDays->totalBasePrice += $objPromoRoom->ratesInfo->surchargeTotal;
+							
+						$objPromoRoom->ratesInfo->allRoomsAllDays->totalPrice *= $response->numberOfRoomsRequested;
+						$objPromoRoom->ratesInfo->allRoomsAllDays->totalPrice += $objPromoRoom->ratesInfo->surchargeTotal;
+		
+						$objHotel->promoRoom = $objPromoRoom;
+					}
+						
+					if ( preg_match('/_t|b\.jpg$/', $hotel->thumbNailUrl) ){
+		
+						$objHotel->thumbUrl = 'http://images.travelnow.com' . (string) $hotel->thumbNailUrl;
+		
+						$objHotel->thumbTypes = new stdClass();
+						$objHotel->thumbTypes->big 		= preg_replace('/_t|b/', '_b', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->landscape 	= preg_replace('/_t|b/', '_l', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->small 		= preg_replace('/_t|b/', '_s', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->f90 		= preg_replace('/_t|b/', '_n', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->f140 		= preg_replace('/_t|b/', '_g', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->f180 		= preg_replace('/_t|b/', '_d', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->f500 		= preg_replace('/_t|b/', '_y', $objHotel->thumbUrl);
+					}
+						
+					//$objHotel->url_avail_query_params = http_build_query( array('hotel_id'=>$hotel->hotelId) + $availParams );
+						
+					$hotels[] = $objHotel;
+				}
+			}
+		}
+		
+		
+		
+		$results['hotels'] = $hotels;
+		$results['more_results_available'] = $response->moreResultsAvailable;
+		$results['size'] = $response->HotelList->size;
+		$results['active_property_count'] = $response->HotelList->activePropertyCount;
+		$results['cache_key'] = $response->cacheKey;
+		$results['cache_location'] = $response->cacheLocation;
+		//$results['current_page'] = $page;
+		
+		return $results;
+		
 	}
 	
 	/**

@@ -1,0 +1,68 @@
+.boxgrid{
+  	width:100%  !important ;
+     
+    
+    overflow: hidden;
+    position: relative;
+    margin-bottom:2px;
+   
+   
+}
+.boxgrid1  {  
+  
+}
+
+.boxcaption{
+   
+    padding:20px; 
+    position: absolute;
+    background: #D10A45;
+     
+   	width:100%  !important ;
+    color:#fff;
+    opacity: .97;
+    /* For IE 5-7 */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=97);
+    /* For IE 8 */
+    -MS-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=97)";
+}
+
+.boxcaption .titlesubtitle{ }
+.boxcaption .title{font-size:22px; font-weight:bold; padding-top:20px}
+.boxcaption .subtitle{font-weight:300}
+.boxcaption .price{font-size:24px;font-weight:bold}
+.boxcaption .days{font-size:14px;}
+.boxcaption .pricedays{position:absolute;bottom:10px; right:10px}
+
+.captionfull .boxcaption {
+     top: 0px;
+     left: 0;
+     display:none
+ }
+.caption .boxcaption {
+     top: 0x;
+     left: 0;
+}
+
+.boxgrid_info{color:#fff; bottom:10px;position: absolute;padding:0px 10px;}
+
+
+.boxgrid1, .boxcaption{height:190px !important} 
+
+@media only screen and (min-width:1200px){
+	.boxgrid,.boxgrid1, .boxcaption{height:200px !important} 
+ 
+}
+
+@media only screen and (min-width: 768px) and (max-width: 959px){
+.boxgrid,.boxgrid1, .boxcaption{    height:220px !important}
+ 
+}
+
+@media only screen and (max-width: 767px){
+.boxgrid,.boxgrid1, .boxcaption{  height:180px !important}	
+}
+
+@media only screen and (min-width: 480px) and (max-width: 767px){
+.boxgrid,.boxgrid1, .boxcaption{height:10px !important}		
+}

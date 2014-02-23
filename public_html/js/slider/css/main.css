@@ -1,0 +1,53 @@
+@CHARSET "UTF-8";
+
+.swiper-container {
+	width: 100%;
+	height: 400px;
+	color: #fff;
+	text-align: center;
+}
+.swiper-slide {
+	width: 600px;
+	height: 100%;
+}
+
+.swiper-container .left,.swiper-container .right{
+	background:#fff url('../img/arrow-left.png') no-repeat center;
+	position:absolute;
+	left:0px;
+	top:0%;
+	height:100%;width:40px;opacity:0.35;cursor:pointer;z-index:10;-webkit-transition:300ms;-moz-transition:300ms;-ms-transition:300ms;-o-transition:300ms;transition:300ms;}
+	.swiper-container .left:hover,.swiper-container 
+	.right:hover{opacity:0.6;width:80px;}
+	.swiper-container .right{background:#fff url('../img/arrow-right.png') no-repeat center;left:auto;right:0px;}
+
+.swiper-slide .title {
+	font-style: italic;
+	font-size: 42px;
+	margin-top: 80px;
+	margin-bottom: 0;
+	line-height: 45px;
+}
+.pagination {
+	position: absolute;
+	z-index: 20;
+	left: 10px;
+	bottom: 10px;
+}
+.swiper-pagination-switch {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 8px;
+	background: #222;
+	margin-right: 5px;
+	opacity: 0.8;
+	border: 1px solid #fff;
+	cursor: pointer;
+}
+.swiper-visible-switch {
+	background: #aaa;
+}
+.swiper-active-switch {
+	background: #fff;
+}
