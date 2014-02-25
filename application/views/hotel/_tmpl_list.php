@@ -14,12 +14,12 @@
 	                
 	            	<div class="informationColumn" style="display: inline;float: left;width: 77%;">
 	            	
-	            		<h2 style="display:block">
+	            		<h5 style="display:block">
 	                		<a target="_blank" href="#">
 								<?php echo $hotel->name; ?>
 	                		</a>
-	            		</h2>
-	                
+	            		</h5>
+	                	<div class="clear"><?php echo $hotel->rating; ?></div>
 	                	<div class="clear">
 	                        <?php echo $hotel->locationDescription; ?>
 	                    	<br>
@@ -48,7 +48,7 @@
 	                    	<span style="text-decoration:line-through;"> € <?php echo $hotel->promoRoom->ratesInfo->allRoomsAllDays->totalBasePrice; ?></span>
 	                    	<?php endif; ?>
 
-	                    	<span style="font-size: 1.7em; font-weight: bold;">€ <?php echo $hotel->promoRoom->ratesInfo->allRoomsAllDays->totalPrice; ?></span>
+	                    	<span style="font-size: 1.2em; font-weight: bold;">€ <?php echo $hotel->promoRoom->ratesInfo->allRoomsAllDays->totalPrice; ?></span>
 	                	</a>
 	                
 	                	<br>
@@ -76,6 +76,8 @@ g_cache_key = "<?php echo $cache_key; ?>";
 g_cache_location = "<?php echo $cache_location; ?>";
 g_is_more_results = "<?php echo $more_results_available; ?>";
 g_total_results = "<?php echo $active_property_count; ?>";
+
+rate_filters = <?php echo json_encode($rate_filters); ?>
 </script>
 
 

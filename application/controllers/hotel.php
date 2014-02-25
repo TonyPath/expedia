@@ -16,25 +16,25 @@ class Hotel extends MY_Controller {
 		$this->addMinifyStylesGroup('form_styles');
 		$this->addMinifyScriptsGroup('form_scripts');
 		
+		$this->addMinifyStylesGroup('homepage_styles');
+		$this->addMinifyScriptsGroup('homepage_scripts');
+		
 		$this->load->helper('url');		
 	}
 	
-	public function search(){
+	public function index(){
 		
 		$this->addMinifyScriptsGroup('hotel_list_scripts');
+		
+		$params = $_GET;
+		
+		$this->dataView["main"]["checkin_date"] = $params["arrival_date"];
+		$this->dataView["main"]["checkout_date"] = $params["departure_date"];
 		
 		$this->setView('hotel/list');
 		
 		$this->loadLayout();
 	}
 	
-	public function index() {
-		
-		$this->dataView['main']['markup']['frm_search'] = $this->loadView("hotel/frm_search");
-		
-		$this->setView('hotel/index');
-		/*
-		$this->loadLayout ();
-		*/
-	}
+	
 }

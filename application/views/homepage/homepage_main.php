@@ -12,7 +12,7 @@
 <section class="frmSearchHotelHomePage"  style="padding-top:120px;">
 
 
-<form action="<?php base_url();?>hotel/search" method="get">
+<form action="<?php base_url();?>hotel/index" method="get">
 
 	<input type="hidden" id="item_id" name="item_id" value="" />
 	<input type="hidden" id="item_category" name="item_category" value="" />

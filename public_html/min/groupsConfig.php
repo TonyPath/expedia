@@ -65,6 +65,10 @@ return
             	//"../js/nlform/nlform.js",
             ),
 
+        "hotel_list_styles" =>
+            array(
+            		
+            ),
 		"hotel_list_scripts" => 
 			array(
 				"../js/hotel/list.js",

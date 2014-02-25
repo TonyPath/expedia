@@ -49,14 +49,37 @@ class AjaxRequestsHotel extends AjaxRequests
 
 	public function listHotels(){
 		
-		$params = $_POST;
-		$data = array();
-		
 		$this->load->library('SrvEanApi');
+		
+		$params = $_POST;
+		
+		$MONEY_SIGNS = array(
+			"USD" => "$",
+			"EUR" => "&euro;",
+			"AUD" => "A$",
+			"GBP" => "&pound;"
+		);
+		$DEFAUL_CURRENCY = 'EUR';
+
+		$money_sign = $MONEY_SIGNS[isset($params["currencyCode"]) ? $params["currencyCode"] : $DEFAUL_CURRENCY];
+		
+		$rate_filters = array(
+			array("name" => "Any Rate", "value" => "-1", "selected" => 'selected'),
+			array("name" => sprintf("%s 1  - %s 100", $money_sign, $money_sign), "value" => "1-100", "selected" => ''),
+			array("name" => sprintf("%s 100 - %s 200", $money_sign, $money_sign), "value" => "100-200", "selected" => ''),
+			array("name" => sprintf("%s 200 - %s 300", $money_sign, $money_sign), "value" => "200-300", "selected" => ''),
+			array("name" => sprintf("%s 300 - %s 500", $money_sign, $money_sign), "value" => "300-500", "selected" => ''),
+			array("name" => sprintf("%s 500 - %s 1000", $money_sign, $money_sign), "value" => "500-1000", "selected" => ''),
+			array("name" => sprintf("%s 1000+", $money_sign), "value" => "1000-999999999", "selected" => '')
+		);
+		
+	
+		
+		
 		
 		parse_str($params["rooms"], $rooms);
 		
-		$requestListParams = array("numberOfResults" => 50);
+		$requestListParams = array("numberOfResults" => 100);
 		
 		if ($params['item_category'] == "City"){
 
@@ -74,7 +97,12 @@ class AjaxRequestsHotel extends AjaxRequests
 						
 						"arrivalDate" => DateTime::createFromFormat('d-m-Y', $params['arrival_date'])->format('m/d/Y'),
 						"departureDate" => DateTime::createFromFormat('d-m-Y', $params['departure_date'])->format('m/d/Y'),
-						"destinationString" => $params["destination_string"]
+						"destinationString" => $params["destination_string"],
+						"minStarRating" => $params["minStarRating"],
+						"sort" => $params["sort"],
+						"currencyCode" => $params["currencyCode"],
+						"minRate" => $params["minRate"],
+						"maxRate" => $params["maxRate"]
 				);
 			}
 			
@@ -89,7 +117,11 @@ class AjaxRequestsHotel extends AjaxRequests
 		
 		$processedData = $this->srveanapi->processListResponce($responseList);
 		
-		$data = $this->loadView("hotel/_tmpl_list", $processedData);
+		$processedData["rate_filters"] = $rate_filters;
+		
+		
+		$data = array();
+		$data["hotelList"] = $this->loadView("hotel/_tmpl_list", $processedData);
 		
 		return
 		array(
