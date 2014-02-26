@@ -83,16 +83,14 @@ class AjaxRequestsHotel extends AjaxRequests
 		
 		if ($params['item_category'] == "City"){
 
-			$requestListParams = array_merge($requestListParams, $rooms);
+			if (isset($params['cacheKey']) && isset($params['cacheLocation'])){
 				
-			if (isset($params['cacheKey'])){
 				$requestListParams['cacheKey'] = $params['cacheKey'];
-			}
-				
-			if (isset($params['cacheLocation'])){
 				$requestListParams['cacheLocation'] = $params['cacheLocation'];
 			}
 			else {
+				$requestListParams = array_merge($requestListParams, $rooms);
+				
 				$requestListParams = array(
 						
 						"arrivalDate" => DateTime::createFromFormat('d-m-Y', $params['arrival_date'])->format('m/d/Y'),
@@ -100,10 +98,13 @@ class AjaxRequestsHotel extends AjaxRequests
 						"destinationString" => $params["destination_string"],
 						"minStarRating" => $params["minStarRating"],
 						"sort" => $params["sort"],
-						"currencyCode" => $params["currencyCode"],
-						"minRate" => $params["minRate"],
-						"maxRate" => $params["maxRate"]
+						"currencyCode" => $params["currencyCode"]
 				);
+				
+				if (isset($params["minRate"]) && isset($params["maxRate"])){
+					$requestListParams["minRate"] = $params["minRate"];
+					$requestListParams["maxRate"] = $params["maxRate"];
+				}
 			}
 			
 			

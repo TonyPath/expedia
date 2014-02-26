@@ -712,7 +712,8 @@ class SrvEanApi {
 		
 	public function getAvailHotelRooms($hotelId, $availParams = array(), $rateKey = null) {
 
-		$requestAvailParams = $this->buildSearchAvailRequestParams($availParams);
+		//$requestAvailParams = $this->buildSearchAvailRequestParams($availParams);
+		$requestAvailParams = $availParams;
 		$requestAvailParams['options'] = "HOTEL_DETAILS,ROOM_TYPES,ROOM_AMENITIES,PROPERTY_AMENITIES,HOTEL_IMAGES";
 		
 		$requestAvailParams['hotelId'] = $hotelId;
@@ -722,6 +723,8 @@ class SrvEanApi {
 		}
 		
 		$response = $this->make_rest_request('avail', $requestAvailParams, "GET");
+		
+		//Zend\Debug\Debug::dump($response); exit;
 		
 		//$hotelRoomAvailabilityResponse = $response->HotelRoomAvailabilityResponse;
 		

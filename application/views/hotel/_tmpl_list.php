@@ -1,13 +1,33 @@
-
-	<?php foreach ($hotels as $idx=>$hotel) : ?>
+<?php 
+	$copy_params = (new ArrayObject($_POST))->getArrayCopy();
 	
+	
+?>
+<?php foreach ($hotels as $idx=>$hotel) : ?>
+	
+	<?php
+	unset($copy_params["spformat"]);
+	
+	unset($copy_params["item_id"]);
+	unset($copy_params["item_category"]);
+	
+	unset($copy_params["minRate"]);
+	unset($copy_params["maxRate"]);
+	
+	unset($copy_params["minStarRating"]);
+	
+	unset($copy_params["sort"]);
+	
+	$overview_url_query_params = http_build_query(array_merge($copy_params, array('hotelId'=>$hotel->id)));
+	$overview_url = "/hotel/overview/?" . $overview_url_query_params;
+	?>
 	<div  style="border:1px black solid;margin:20px;">
 		<div  style="padding: 10px 0px 10px 0px; ">
         
 	       	<div  style="display: inline;float: left;width: 75%;">
 	                
 	                <?php if (isset($hotel->thumbUrl)) :?>
-	                <a target="_blank" href="#" style="float: left;margin-right: 10px;">
+	                <a target="_blank" href="<?php echo $overview_url; ?>" style="float: left;margin-right: 10px;">
 	                    <img src="<?php echo $hotel->thumbTypes->f90; ?>" />
 	                </a>
 	                <?php endif; ?>
@@ -68,7 +88,7 @@
 
 	<div style="clear:both;"></div>
 
-	<?php endforeach; ?>
+<?php endforeach; ?>
 
 
 <script type="text/javascript">
