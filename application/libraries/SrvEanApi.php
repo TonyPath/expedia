@@ -25,6 +25,13 @@ class SrvEanApi {
 	
 	protected $client;
 	
+	private static $TYPES = array( 
+		"unknown"=> "UNKNOWN", 
+		"unrecoverable"=> "UNRECOVERABLE", 
+		"recoverable"=> "RECOVERABLE", 
+		"agent_attention"=> "AGENT_ATTENTION"
+	);
+	
 	public function __construct(){
 
 		session_start();
@@ -89,6 +96,102 @@ class SrvEanApi {
         $responseJson = json_decode($responseBody);
 		
 		return $responseJson;
+	}
+	
+	public function processResponse($response, $element){
+		
+		if (is_object($response)){
+			
+			
+			// error code from EAN service APIs
+			if (property_exists($response->{$element}, "EanWsError")) {
+				
+				$error = $response->{$element}->EanWsError;
+				
+				$values = array();
+				$values["type"] = $error->handling;
+				$values["category"] = $error->category;
+				$values["message"] = $error->presentationMessage;
+				$values["detail_message"] = $error->verboseMessage;
+				$values["itinerary_id"] = $error->itineraryId;
+				$values["other_info"] = null;
+				$values["error_code"] = null;
+				$values["user_message"] = null;
+				
+				if ($values["type"] == self::$TYPES["unrecoverable"] ){
+					
+					if ($values["category"] == "UNKNOWN"){
+						$values["other_info"] = $error->ErrorAttributes;
+						$values["error_code"] = "Invalid Confirmation Number";
+					}
+				}
+				else if ($values["type"] == self::$TYPES["recoverable"] ){
+					
+					if ($values["category"] == "PRICE_MISMATCH"){
+						$values["other_info"] = $error->ErrorAttributes;
+						$values["error_code"] = "Price Mismatch";
+					}
+					else if ($values["category"] == "DATA_VALIDATION"){
+						
+						if (property_exists($response->{$element}, "LocationInfos")) {
+
+							$values["other_info"] = $response->{$element}->LocationInfos->LocationInfo;
+							$values["error_code"] = "Multiple Locations";
+							$values["user_message"] = "Multiple Locations";
+						}
+					}
+				}
+				else if ($values["type"] == self::$TYPES["agent_attention"] ){
+					
+					if ($values["category"] == "UNKNOWN"){
+
+						$values["other_info"] = "Please wait for an agent to follow up on the final status of the booking";
+						$values["error_code"] = "Confirmed Booking";
+					}
+					else if ($values["category"] == "SUPPLIER_COMMUNICATION"){
+						$values["error_code"] = "Pending Process";
+					}
+				}
+
+				return $this->returnErrors($values);
+			}
+			else {
+				return $this->returnSuccess($response);
+			}
+		}
+		else { //other HTTP error codes: 403, 404,...
+			$values = array();
+			$values["type"] = "UNKNOW";
+			$values["category"] = "UNKNOW";
+			$values["message"] = strip_tags($response);
+			$values["detail_message"] = null;
+			$values["itinerary_id"] = null;
+			$values["other_info"] = null;
+			$values["error_code"] = null;
+			$values["user_message"] = null;
+			
+			return $this->returnErrors($values);
+		}
+	}
+	
+	public function returnSuccess($response){
+		
+		$success = array(
+				"status"=> true,
+				"response"=> $response
+		);
+		
+		return (object) $success;
+	}
+	
+	public function returnErrors($values){
+		
+		$error = array(
+			"status"=> false,
+			"error"=> $values
+		);
+		
+		return (object) $error;
 	}
 	
 	/**
@@ -714,7 +817,7 @@ class SrvEanApi {
 
 		//$requestAvailParams = $this->buildSearchAvailRequestParams($availParams);
 		$requestAvailParams = $availParams;
-		$requestAvailParams['options'] = "HOTEL_DETAILS,ROOM_TYPES,ROOM_AMENITIES,PROPERTY_AMENITIES,HOTEL_IMAGES";
+		//$requestAvailParams['options'] = "HOTEL_DETAILS,ROOM_TYPES,ROOM_AMENITIES,PROPERTY_AMENITIES,HOTEL_IMAGES";
 		
 		$requestAvailParams['hotelId'] = $hotelId;
 		
@@ -722,49 +825,48 @@ class SrvEanApi {
 			$requestAvailParams['rateKey'] = $rateKey;
 		}
 		
-		$response = $this->make_rest_request('avail', $requestAvailParams, "GET");
+		$originServiceResponse = $this->make_rest_request('avail', $requestAvailParams, "GET");
 		
-		//Zend\Debug\Debug::dump($response); exit;
+		$response = $this->processResponse($originServiceResponse, "HotelRoomAvailabilityResponse");
 		
-		//$hotelRoomAvailabilityResponse = $response->HotelRoomAvailabilityResponse;
-		
-		$parsed_response = $this->parseHotelAvailResponse($response, $requestAvailParams);
-		
-		return $parsed_response;
+		if ($response->status == true){	
+			
+			$fixedResponse = $this->processHotelAvailResponse($response->response);
+
+			return (object) array("status"=> true, "response"=> $fixedResponse);
+		}
+		else {
+			return $response;
+		}
 	}
 	
 	public function getHotelInfos($hotelId){
 		
+		//$requestParams['options'] = "HOTEL_SUMMARY";
+		
 		$requestParams['hotelId'] = $hotelId;
 				
-		$response = $this->make_rest_request('info', $requestParams, "GET");
+		$originServiceResponse = $this->make_rest_request('info', $requestParams, "GET");
 		
-		$parsedResponse = $this->parseHotelInfoResponse($response, $requestParams);
+		$response = $this->processResponse($originServiceResponse, "HotelInformationResponse");
 		
-		return $parsedResponse;
+		if ($response->status == true){
+			
+			$fixedResponse = $this->processHotelInfoResponse($response->response);
+			
+			return (object) array("status"=> true, "response"=> $fixedResponse);
+		}
+		else {
+			
+			return $response;
+		}
+		
 	}
 	
-	public function parseHotelInfoResponse($hotelInfoResponse, $requestParams){
-	
-		//return $hotel_avail_response;
+	public function processHotelInfoResponse($hotelInfoResponse){
 	
 		$response = $hotelInfoResponse->HotelInformationResponse;
 	
-	
-		//if ($response->size == 0){
-		//	return (object) array();
-		//}
-	
-		
-		
-		/*
-		 * Request Infos
-		*/
-		$requestInfo = new stdClass();
-	
-		/*
-		 * Hotel Infos
-		*/
 		$objHotel = new stdClass();
 	
 		$objHotel->id = $response->HotelSummary->hotelId;
@@ -817,16 +919,17 @@ class SrvEanApi {
 		}
 		
 	
-		$requestInfo->hotel = $objHotel;
+		$responseInfo = new stdClass();
+		$responseInfo->hotel = $objHotel;
 	
-		return $requestInfo;
+		return $responseInfo;
 	}
 	
-	public function parseHotelAvailResponse($hotel_avail_response, $request_avail_params){
+	public function processHotelAvailResponse($hotelAvailResponse){
 		
 		//return $hotel_avail_response;
 		
-		$response = $hotel_avail_response->HotelRoomAvailabilityResponse;
+		$response = $hotelAvailResponse->HotelRoomAvailabilityResponse;
 		
 		
 		if ($response->size == 0){
