@@ -33,12 +33,13 @@ class Sphinx extends CI_Controller {
 		$results = $this->sphinxclient->Query("paris", "idx_cities");
 		
 		//$result_array = $this->sphinxclient->runQueries();
-		Zend\Debug\Debug::dump($results);
+		//Zend\Debug\Debug::dump($results);
 		
 		foreach($results['matches'] as $id=>$info){
 			
-			$region = $this->doctrine->em->find('Entities\Region', $id);
-			echo $region->getName()."   /".$region->getNameLong()."  /". $region->getType() ."<br>";
+			Zend\Debug\Debug::dump($info);
+			//$region = $this->doctrine->em->find('Entities\Region', $id);
+			//echo $region->getName()."   /".$region->getNameLong()."  /". $region->getType() ."<br>";
 		}
 		
 		

@@ -9,13 +9,12 @@
 }
 </style>
 
-<section class="frmSearchHotelHomePage"  style="padding-top:120px;">
+<section id="frmHomePageSearchHotel"  style="padding-top:120px;">
 
 
-<form action="<?php base_url();?>hotel/index" method="get">
+<form action="<?php base_url();?>hotel/search" method="get">
 
-	<input type="hidden" id="item_id" name="item_id" value="" />
-	<input type="hidden" id="item_category" name="item_category" value="" />
+	<input type="hidden" id="region_id" name="region_id" value="" />
 	
 	<div class="row">
 

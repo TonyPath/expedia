@@ -1,4 +1,7 @@
-<?php $hotel = $hotelOverview->hotel; ?>
+<?php $hotel = $hotelOverview->hotel; 
+
+
+?>
 <section class=""  style="padding-top:120px;">
 <div class="row">
 <h1>
@@ -115,6 +118,13 @@ endif;
 ?>
 </div>
 </div>
+
+<form id="booking_form" accept-charset="UTF-8" action="/hotel/showBookingScreen" method="post">
+	                		
+	                		<input type='hidden' name='rate_key' value='<?php echo $room->rateKey; ?>'/>
+	                		
+	                		<input type='submit' class="button" value='Book now' id='book-btn'/>
+</form>
 
 </div>
 <?php endforeach; ?>

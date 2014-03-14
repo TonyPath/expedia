@@ -1,5 +1,6 @@
 <?php
 
+use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
 if (! defined ( 'BASEPATH' ))
 	exit ( 'No direct script access allowed' );
 
@@ -23,16 +24,24 @@ class Hotel extends MY_Controller {
 		$this->load->library('SrvEanApi');
 	}
 	
+	public function index()
+	{
 	
+		$this->addMinifyScriptsGroup('hotel_home_scripts');
+		
+		$this->setView('hotel/home');
 	
-	public function index(){
-
-		$this->addMinifyScriptsGroup('hotel_list_scripts');
+		$this->loadLayout();
+	}
+	
+	public function search(){
 		
 		$params = $_GET;
 		
-		$this->dataView["main"]["checkin_date"] = $params["arrival_date"];
-		$this->dataView["main"]["checkout_date"] = $params["departure_date"];
+		$this->dataView["main"]["checkin_date"] = isset($params["arrival_date"])? $params["arrival_date"] : "";
+		$this->dataView["main"]["checkout_date"] = isset($params["departure_date"])? $params["departure_date"] : "";
+		
+		$this->addMinifyScriptsGroup('hotel_list_scripts');
 		
 		$this->setView('hotel/list');
 		
@@ -43,48 +52,55 @@ class Hotel extends MY_Controller {
 		
 		$params = $_GET;
 		
-		$overviewResponse = $this->srveanapi->getHotelInfos($params['hotelId']);
-		Zend\Debug\Debug::dump($overviewResponse);
+		$returnResponse = new \stdClass();
 		
-		//$overviewResponse = $this->srveanapi->getHotelInfos($params['hotelId']);
-		$arrivalDate = DateTime::createFromFormat('d-m-Y', $params['arrival_date'])->format('m/d/Y');
-		$departureDate = DateTime::createFromFormat('d-m-Y', $params['departure_date'])->format('m/d/Y');
-			
-		parse_str($params["rooms"], $rooms);
-			
-		$overviewResponse  = $this->srveanapi->getAvailHotelRooms(
-				$params['hotelId'],
-				array(
-						'arrivalDate'	=> $arrivalDate,
-						'departureDate'	=> $departureDate
-				) + $rooms
-		);
+		$detailHotelResponse  = $this->srveanapi->getHotelDetails($params['hotelId']);
 		
-		Zend\Debug\Debug::dump($overviewResponse);
-		exit;
-
-		if ( isset($params['arrival_date']) && isset($params['departure_date']) && isset($params["rooms"]) ){
+		if ($detailHotelResponse->status){
 			
-			$arrivalDate = DateTime::createFromFormat('d-m-Y', $params['arrival_date'])->format('m/d/Y');
-			$departureDate = DateTime::createFromFormat('d-m-Y', $params['departure_date'])->format('m/d/Y');
+			$returnResponse->hotel = $detailHotelResponse->response->hotel;
 			
-			parse_str($params["rooms"], $rooms);
+			if (isset($params['arrival_date']) && isset($params['departure_date'])){ // for room availability
 			
-			$overviewResponse  = $this->srveanapi->getAvailHotelRooms(
-					$params['hotelId'],
-					array(
-							'arrivalDate'	=> $arrivalDate,
-							'departureDate'	=> $departureDate
-					) + $rooms
-			);
+				$dateLess = false;
+			
+				$availabilityParams["arrivalDate"] = DateTime::createFromFormat('d-m-Y', $params['arrival_date'])->format('m/d/Y');
+				$availabilityParams["departureDate"] = DateTime::createFromFormat('d-m-Y', $params['departure_date'])->format('m/d/Y');
+			
+				if (isset($params["rooms"])){
+						
+					parse_str($params["rooms"], $rooms);
+						
+					$availabilityParams += $rooms;
+				}
+				else {
+					$availabilityParams += array("room1"=>"2");
+				}
+				
+				$availabilityParams["currencyCode"] = $params["currencyCode"];
+				$availabilityParams["includeDetails"] = true;
+				
+				$availabilityParams["hotelId"] = $params["hotelId"];
+				
+				
+				$availableRoomResponse  = $this->srveanapi->getHotelAvailability($availabilityParams);
+				
+				if ($availableRoomResponse->status){
+						
+					$returnResponse->hotel->rooms = $availableRoomResponse->response->hotel->rooms;
+						
+				}
+				
+			}
+			
+			
 		}
 		else {
-			$overviewResponse = $this->srveanapi->getHotelInfos($params['hotelId']);
+			Zend\Debug\Debug::dump($detailHotelResponse);
+			exit;
 		}
-
 		
-		exit;
-		$this->dataView['main']['hotelOverview'] = $overviewResponse;
+		$this->dataView['main']['hotelOverview'] = $returnResponse;
 	
 		$this->setView('hotel/overview');
 	

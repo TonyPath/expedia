@@ -25,12 +25,20 @@ class SrvEanApi {
 	
 	protected $client;
 	
-	private static $TYPES = array( 
+	public static $TYPES = array( 
 		"unknown"=> "UNKNOWN", 
 		"unrecoverable"=> "UNRECOVERABLE", 
 		"recoverable"=> "RECOVERABLE", 
 		"agent_attention"=> "AGENT_ATTENTION"
 	);
+	
+	public static $MONEY_SIGNS = array(
+			"USD" => "$",
+			"EUR" => "&euro;",
+			"AUD" => "A$",
+			"GBP" => "&pound;"
+	);
+	const DEFAUL_CURRENCY = 'EUR';
 	
 	public function __construct(){
 
@@ -115,7 +123,7 @@ class SrvEanApi {
 				$values["detail_message"] = $error->verboseMessage;
 				$values["itinerary_id"] = $error->itineraryId;
 				$values["other_info"] = null;
-				$values["error_code"] = null;
+				$values["error_code"] = $error->category;
 				$values["user_message"] = null;
 				
 				if ($values["type"] == self::$TYPES["unrecoverable"] ){
@@ -129,14 +137,14 @@ class SrvEanApi {
 					
 					if ($values["category"] == "PRICE_MISMATCH"){
 						$values["other_info"] = $error->ErrorAttributes;
-						$values["error_code"] = "Price Mismatch";
 					}
 					else if ($values["category"] == "DATA_VALIDATION"){
 						
 						if (property_exists($response->{$element}, "LocationInfos")) {
 
+							$values["error_code"] = "MULTIPLE_lOCATIONS";
+
 							$values["other_info"] = $response->{$element}->LocationInfos->LocationInfo;
-							$values["error_code"] = "Multiple Locations";
 							$values["user_message"] = "Multiple Locations";
 						}
 					}
@@ -194,165 +202,81 @@ class SrvEanApi {
 		return (object) $error;
 	}
 	
-	/**
-	 * 
-	 * @param unknown $lat
-	 * @param unknown $lng
-	 * @param number $radius
-	 * @param string $radius_unit
-	 * @param unknown $base_params
-	 * @param unknown $filter_params
-	 * @param number $page
-	 * @return multitype:unknown NULL multitype:NULL
-	 */
-	public function find_hotels_by_geo_info($lat, 
-											$lng, 
-											$radius = 10, 
-											$radius_unit = "KM", 
-											$base_params = array(), 
-											$filter_params = array(),
-											$page = 1){
-
+	public function searchHotels($criteriaObject){
+	
+		//print_r($criteriaObject); exit;
+		
 		$requestParams = array();
+		
+		if ($criteriaObject->searchMethod == "more"){
+			
+			$requestParams += $criteriaObject->pagingParams;
+		}
+		else if ($criteriaObject->searchMethod == "destinationString"){
+			
+			$requestParams["destinationString"] = $criteriaObject->primaryParams["destinationString"];
+			
+			if (!$criteriaObject->dateless){
+				$requestParams += $criteriaObject->availabilityParams;
+			}
+			
+			$requestParams += $criteriaObject->filteringParams;
+			$requestParams += $criteriaObject->otherParams;
+		}
+		else if ($criteriaObject->searchMethod == "coordinates"){
+			
+			$requestParams["latitude"] = $criteriaObject->primaryParams["latitude"];
+			$requestParams["longitude"] = $criteriaObject->primaryParams["longitude"];
+			
+			if (!$criteriaObject->dateless){
+				$requestParams += $criteriaObject->availabilityParams;
+			}
+			
+			$requestParams += $criteriaObject->filteringParams;
+			$requestParams += $criteriaObject->otherParams;
+			
+			$requestParams['searchRadius'] = "10";
+			$requestParams['searchRadiusUnit'] = "KM";
+			$requestParams['sort'] = "PROXIMITY";
+		}
+		else if ($criteriaObject->searchMethod == "hotelIds"){
+			//TODO
+			$regionID =  $criteriaObject->rawData["region_id"];
+			$hotelsIDList = $this->CI->doctrine->em->getRepository('Entities\Hotel')->getHotelsIDList( $regionID );
+			//echo $hotelsIDList; exit;
+			
+			$requestParams['hotelIdList'] = $hotelsIDList;
+			
+			$requestParams += $criteriaObject->filteringParams;
+			$requestParams += $criteriaObject->otherParams;
 
-		if ($page == 0) {
-			$page = 1;
-			//$origin_params['page'] = 1;
+			$requestParams['sort'] = "NO_SORT";
 		}
 
-		if ($page == 1 || $page == 0)
-			$_SESSION['EAN_hotel_results'] = array();
+		
+		//print_r($requestParams); exit;
+		
+		$serviceResponse = $this->make_rest_request('list', $requestParams, "POST");
+		
+		//print_r($serviceResponse); exit;
 
-		if(isset($_SESSION['EAN_hotel_results'][$page])){
-			$requestParams['cacheKey'] = $_SESSION['EAN_hotel_results'][$page]['cacheKey'];
-			$requestParams['cacheLocation'] = $_SESSION['EAN_hotel_results'][$page]['cacheLocation'];
-		}
-		else {
-			$request_geoinfo_params = array();
-			$request_geoinfo_params['latitude'] = $lat;
-			$request_geoinfo_params['longitude'] = $lng;
-			$request_geoinfo_params['searchRadius'] = $radius;
-			$request_geoinfo_params['searchRadiusUnit'] = $radius_unit;
-			$request_geoinfo_params['sort'] = "PROXIMITY";
+		$listResponse = $this->processResponse($serviceResponse, "HotelListResponse");
 
-			$request_base_params 	= $this->buildSearchAvailRequestParams($base_params);
+		if (!$listResponse->status){
 
-			$request_filter_params 	= $this->buildSearchFilterRequestParams($filter_params);
+			$error = $listResponse->error;
+			
+			if ($error["error_code"] == "MULTIPLE_lOCATIONS"){
 
-			$requestParams = array_merge($request_base_params, $request_geoinfo_params, $request_filter_params);
-		}
-		//Zend\Debug\Debug::dump($requestParams);exit;
-		$response = $this->make_rest_request('list', $requestParams, "POST");
-		//return $response;
-
-		$parsed_response = $this->parseHotelListResponse($response, $requestParams, $base_params, $page);
-
-		$this->update_hotel_list_session($response, $page);
-
-		return $parsed_response;
-	}
-	
-	/**
-	 * 
-	 * @param unknown $id_list
-	 * @param unknown $base_params
-	 * @param unknown $filter_params
-	 * @param number $page
-	 * @return multitype:unknown NULL multitype:NULL
-	 */
-	public function findHotelsByIdList( $idList,	
-										$baseParams = array(),
-										$filterParams = array(),
-										$page = 1){
-	
-		$requestParams = array();
-	
-		if ($page == 0) {
-			$page = 1;
-			//$origin_params['page'] = 1;
-		}
-	
-		if ($page == 1 || $page == 0)
-			$_SESSION['EAN_hotel_results'] = array();
-	
-		if(isset($_SESSION['EAN_hotel_results'][$page])){
-			$requestParams['cacheKey'] = $_SESSION['EAN_hotel_results'][$page]['cacheKey'];
-			$requestParams['cacheLocation'] = $_SESSION['EAN_hotel_results'][$page]['cacheLocation'];
-		}
-		else {
-			$requestIdListParams = array();
-			$requestIdListParams['hotelIdList'] = $idList;
-	
-			$requestBaseParams 	= $this->buildSearchAvailRequestParams($baseParams);
-	
-			$requestFilterParams 	= $this->buildSearchFilterRequestParams($filterParams);
-	
-			$requestParams = array_merge($requestBaseParams, $requestIdListParams, $requestFilterParams);
+				$regionID =  $criteriaObject->rawData["region_id"];
+				//TODO
+			}
 		}
 		
-		//Zend\Debug\Debug::dump($baseParams);
-	
-		$response = $this->make_rest_request('list', $requestParams, "POST");
-	
-		$parsed_response = $this->parseHotelListResponse($response, $requestParams, $requestBaseParams, $page);
-	
-		$this->update_hotel_list_session($response, $page);
-	
-		return $parsed_response;
-	}
-	
-	/**
-	 * 
-	 * @param unknown $dest_id
-	 * @param unknown $base_params
-	 * @param unknown $filter_params
-	 * @param number $page
-	 * @return multitype:unknown NULL multitype:NULL
-	 */
-	public function find_hotels_by_dest_id( $dest_id,
-											$base_params = array(),
-											$filter_params = array(),
-											$page = 1){
-	
-		$requestParams = array();
-	
-		if ($page == 0) {
-			$page = 1;
-			//$origin_params['page'] = 1;
-		}
-	
-		if ($page == 1 || $page == 0)
-			$_SESSION['EAN_hotel_results'] = array();
-	
-		if(isset($_SESSION['EAN_hotel_results'][$page])){
-			$requestParams['cacheKey'] = $_SESSION['EAN_hotel_results'][$page]['cacheKey'];
-			$requestParams['cacheLocation'] = $_SESSION['EAN_hotel_results'][$page]['cacheLocation'];
-		}
-		else {
-			$request_dest_params = array();
-			$request_dest_params['destinationId'] = $dest_id;
-	
-			$request_base_params 	= $this->buildSearchBaseRequestParams($base_params);
-	
-			$request_filter_params 	= $this->build_search_filter_request_params($filter_params);
-	
-			$requestParams = array_merge($request_base_params, $request_dest_params, $request_filter_params);
-		}
-		//Zend\Debug\Debug::dump($requestParams);exit;
-		$response = $this->make_rest_request('list', $requestParams, "POST");
-	
-		$parsed_response = $this->parseHotelListResponse($response, $requestParams, $request_base_params, $page);
+		return $listResponse;
+	} 
 
-		$this->update_hotel_list_session($response, $page);
 	
-		return $parsed_response;
-	}	
-
-	/**
-	 * 
-	 * @param unknown $hotel_list_response
-	 * @param unknown $page
-	 */
 	public function update_hotel_list_session($hotel_list_response, $page){
 		
 		$response = $hotel_list_response->HotelListResponse;
@@ -394,12 +318,13 @@ class SrvEanApi {
 					$objHotel = new stdClass();
 						
 					if (isset($hotel->RoomRateDetailsList)){
+						
 						$rateInfo = $hotel->RoomRateDetailsList->RoomRateDetails->RateInfos->RateInfo;
 						$chargeableRateInfo = $rateInfo->ChargeableRateInfo;
 						$numberOfRoomsRequested = count($rateInfo->RoomGroup->Room);
-					}
 						
-					$objHotel = new stdClass();
+						$objHotel->rateCode = $hotel->RoomRateDetailsList->RoomRateDetails->rateCode;
+					}
 						
 					$objHotel->id = $hotel->hotelId;
 						
@@ -414,6 +339,8 @@ class SrvEanApi {
 					$objHotel->highRate = $hotel->highRate;
 						
 					$objHotel->lowRate = $hotel->lowRate;
+					
+					$objHotel->sortedPrice = $hotel->lowRate;
 						
 					$objHotel->latitude = $hotel->latitude;
 						
@@ -448,8 +375,8 @@ class SrvEanApi {
 						if (isset($rateInfo) && isset($rateInfo->promo) && $rateInfo->promo === "true"){
 		
 							$objPromoRoom->ratesInfo->isPromo = true;
-							//$objPromoRoom->ratesInfo->promoDescription = $rateInfo->promoDescription || "";
-							$objPromoRoom->ratesInfo->promoDescription = "";
+							$objPromoRoom->ratesInfo->promoDescription = (isset($rateInfo->promoDescription)) ? $rateInfo->promoDescription : "";
+							//$objPromoRoom->ratesInfo->promoDescription = "";
 						}
 		
 						$objPromoRoom->ratesInfo->surchargeTotal = @ $chargeableRateInfo->surchargeTotal;
@@ -487,8 +414,10 @@ class SrvEanApi {
 							
 						$objPromoRoom->ratesInfo->allRoomsAllDays->totalPrice *= $response->numberOfRoomsRequested;
 						$objPromoRoom->ratesInfo->allRoomsAllDays->totalPrice += $objPromoRoom->ratesInfo->surchargeTotal;
-		
+
 						$objHotel->promoRoom = $objPromoRoom;
+						
+						$objHotel->sortedPrice = $objPromoRoom->ratesInfo->allRoomsAllDays->totalPrice;
 					}
 						
 					if ( preg_match('/_t|b\.jpg$/', $hotel->thumbNailUrl) ){
@@ -496,16 +425,14 @@ class SrvEanApi {
 						$objHotel->thumbUrl = 'http://images.travelnow.com' . (string) $hotel->thumbNailUrl;
 		
 						$objHotel->thumbTypes = new stdClass();
-						$objHotel->thumbTypes->big 		= preg_replace('/_t|b/', '_b', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->big 			= preg_replace('/_t|b/', '_b', $objHotel->thumbUrl);
 						$objHotel->thumbTypes->landscape 	= preg_replace('/_t|b/', '_l', $objHotel->thumbUrl);
 						$objHotel->thumbTypes->small 		= preg_replace('/_t|b/', '_s', $objHotel->thumbUrl);
-						$objHotel->thumbTypes->f90 		= preg_replace('/_t|b/', '_n', $objHotel->thumbUrl);
+						$objHotel->thumbTypes->f90 			= preg_replace('/_t|b/', '_n', $objHotel->thumbUrl);
 						$objHotel->thumbTypes->f140 		= preg_replace('/_t|b/', '_g', $objHotel->thumbUrl);
 						$objHotel->thumbTypes->f180 		= preg_replace('/_t|b/', '_d', $objHotel->thumbUrl);
 						$objHotel->thumbTypes->f500 		= preg_replace('/_t|b/', '_y', $objHotel->thumbUrl);
 					}
-						
-					//$objHotel->url_avail_query_params = http_build_query( array('hotel_id'=>$hotel->hotelId) + $availParams );
 						
 					$hotels[] = $objHotel;
 				}
@@ -518,20 +445,17 @@ class SrvEanApi {
 		$results['more_results_available'] = $response->moreResultsAvailable;
 		$results['size'] = $response->HotelList->size;
 		$results['active_property_count'] = $response->HotelList->activePropertyCount;
-		$results['cache_key'] = $response->cacheKey;
-		$results['cache_location'] = $response->cacheLocation;
+		
+		$results['cache_key'] = (isset($response->cacheKey)) ? $response->cacheKey : "";
+		$results['cache_location'] = (isset($response->cacheLocation)) ? $response->cacheLocation : "";
 		//$results['current_page'] = $page;
+		$results["rate_key"] = (isset($response->rateKey)) ? $response->rateKey : "";
 		
 		return $results;
 		
 	}
 	
-	/**
-	 * 
-	 * @param unknown $hotel_list_response
-	 * @param unknown $page
-	 * @return multitype:unknown NULL multitype:NULL
-	 */
+	
 	public function parseHotelListResponse($hotelListResponse, $requestParams, $availParams, $page){
 		
 		$response = $hotelListResponse->HotelListResponse;
@@ -705,112 +629,21 @@ class SrvEanApi {
 		return $results;
 	}
 	
-	/**
-	 * 
-	 * @param unknown $base_params
-	 * @return multitype:string unknown
-	 */
-	public function buildSearchAvailRequestParams($baseParams){
-
-		//return $base_params;
+	public function getHotelAvailability($availabilityParams){
 		
-		$requestParams = array();
-		$rooms = array();
+		$originServiceResponse = $this->make_rest_request('avail', $availabilityParams, "GET");
 		
-		$requestParams['numberOfResults'] = self::DEFAULT_SHOW_RESULTS;
+		$response = $this->processResponse($originServiceResponse, "HotelRoomAvailabilityResponse");
 		
-		if (isset($baseParams['arrivalDate']) && isset($baseParams['departureDate'])){
-
-			if (true){
-
-				function preg_grep_keys($pattern, $input, $flags = 0) {
-					return array_intersect_key($input, array_flip(preg_grep($pattern, array_keys($input), $flags)));
-				}
-								
-				$requestParams['arrivalDate'] = $baseParams['arrivalDate'];
-				$requestParams['departureDate'] = $baseParams['departureDate'];
-			
+		if ($response->status == true){
 				
-				$rooms = preg_grep_keys('/room[1-9]$/', $baseParams);
-				
-				
-				/*
-				if (isset( $base_params['rooms'] )) {
-			
-					for($i = 1; $i <= $base_params['rooms']; $i ++) {
-						
-						$rm = array ();
-						$adults = $base_params['adults' . $i];
-						$rm [] = $adults;
-						
-						for($j = 1; $j <= $base_params['child' . $i]; $j ++) {
-							$rm [] = $base_params['childage' . $i . $j];
-						}
-						
-						$requestParams['room' . $i] = implode ( ',', $rm );
-					}
-				}
-				else {
-					// error rooms
-				}
-				*/
-			}
-			else {
-				//error date format
-			}
+			$fixedResponse = $this->processHotelAvailResponse($response->response);
+		
+			return (object) array("status"=> true, "response"=> $fixedResponse);
 		}
 		else {
-			// dateless searching
+			return $response;
 		}
-		
-		return $requestParams + $rooms;
-	}
-	
-	public function buildAvailBaseRequestParams($availParams){
-		
-		$params = $this->buildSearchBaseRequestParams($availParams);
-		
-		unset($params['numberOfResults']);
-		
-		return $params;
-	} 
-	
-	/**
-	 * 
-	 * @param unknown $filter_params
-	 * @return multitype:unknown
-	 */
-	public function buildSearchFilterRequestParams($filter_params){
-		
-		//return $filter_params;
-		
-		$requestParams = array();
-		
-		if (isset($filter_params['min_rate'])){
-			$requestParams['minRate'] = $filter_params['min_rate']; 
-		}
-		
-		if (isset($filter_params['max_rate'])){
-			$requestParams['maxRate'] = $filter_params['max_rate'];
-		}
-		
-		if (isset($filter_params['min_star'])){
-			$requestParams['minStarRating'] = $filter_params['min_star'];
-		}
-		
-		if (isset($filter_params['max_star'])){
-			$requestParams['maxStarRating'] = $filter_params['max_star'];
-		}
-		
-		if (isset($filter_params['sort'])){
-			$requestParams['sort'] = $filter_params['sort'];
-		}
-		
-		if (isset($filter_params['include_surrounding'])){
-			$requestParams['includeSurrounding'] = $filter_params['include_surrounding'];
-		}
-		
-		return $requestParams;
 	}
 		
 	public function getAvailHotelRooms($hotelId, $availParams = array(), $rateKey = null) {
@@ -840,7 +673,7 @@ class SrvEanApi {
 		}
 	}
 	
-	public function getHotelInfos($hotelId){
+	public function getHotelDetails($hotelId){
 		
 		//$requestParams['options'] = "HOTEL_SUMMARY";
 		
@@ -931,6 +764,7 @@ class SrvEanApi {
 		
 		$response = $hotelAvailResponse->HotelRoomAvailabilityResponse;
 		
+		//print_r($response); exit;
 		
 		if ($response->size == 0){
 			return (object) array();
@@ -1029,7 +863,8 @@ class SrvEanApi {
 			$objRoom = new stdClass();
 
 			//$objRoom->price_total = 0;
-			//$objRoom->rate_key = $rateInfo->RoomGroup->Room->rateKey;
+			//$objRoom->rateKey = $rateInfo->RoomGroup->Room->rateKey;
+			//Zend\Debug\Debug::dump($room->RateInfos->RateInfo->RoomGroup);
 			
 			
 			$objRoom->description = $room->rateDescription;
@@ -1040,6 +875,8 @@ class SrvEanApi {
 			if (isset($room->RateInfos)){
 				$rateInfo = 			$room->RateInfos->RateInfo;
 				$chargeableRateInfo = $rateInfo->ChargeableRateInfo;
+				
+				$objRoom->rateKey = @ $rateInfo->RoomGroup->Room->rateKey;
 			}
 			
 			$objRoom->ratesInfo = new stdClass();

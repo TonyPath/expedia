@@ -30,5 +30,10 @@ Entities\Region:
  oneToOne:
   coordinates:
    targetEntity: RegionCenterCoordinates
-   mappedBy: region  
-  
+   mappedBy: region
+  poi:
+   targetEntity: PointOfInterest
+   mappedBy: region
+  city:
+   targetEntity: City
+   mappedBy: region

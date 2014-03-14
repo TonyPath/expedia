@@ -60,6 +60,16 @@ class Region
     private $coordinates;
 
     /**
+     * @var \Entities\PointOfInterest
+     */
+    private $poi;
+
+    /**
+     * @var \Entities\City
+     */
+    private $city;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $hotels;
@@ -300,6 +310,52 @@ class Region
     public function getCoordinates()
     {
         return $this->coordinates;
+    }
+
+    /**
+     * Set poi
+     *
+     * @param \Entities\PointOfInterest $poi
+     * @return Region
+     */
+    public function setPoi(\Entities\PointOfInterest $poi = null)
+    {
+        $this->poi = $poi;
+    
+        return $this;
+    }
+
+    /**
+     * Get poi
+     *
+     * @return \Entities\PointOfInterest 
+     */
+    public function getPoi()
+    {
+        return $this->poi;
+    }
+
+    /**
+     * Set city
+     *
+     * @param \Entities\City $city
+     * @return Region
+     */
+    public function setCity(\Entities\City $city = null)
+    {
+        $this->city = $city;
+    
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return \Entities\City 
+     */
+    public function getCity()
+    {
+        return $this->city;
     }
 
     /**

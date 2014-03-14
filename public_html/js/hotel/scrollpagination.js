@@ -10,28 +10,27 @@
 
 (function( $ ){
 
+	$.fn.scrollPagination = function(options) {
 
- $.fn.scrollPagination = function(options) {
+		var opts = $.extend($.fn.scrollPagination.defaults, options);
+		var target = opts.scrollTarget;
+    
+		if (target == null){
+			target = obj;
+		}
+		
+		opts.scrollTarget = target;
 
-    var opts = $.extend($.fn.scrollPagination.defaults, options);
-    var target = opts.scrollTarget;
-    if (target == null){
-      target = obj;
-    }
-    opts.scrollTarget = target;
+		return this.each(function() {
+			$.fn.scrollPagination.init($(this), opts);
+		});
+	};
 
-    return this.each(function() {
-      $.fn.scrollPagination.init($(this), opts);
-    });
-
-  };
-
-  $.fn.stopScrollPagination = function(){
-    return this.each(function() {
-    $(this).attr('scrollPagination', 'disabled');
-    });
-
-  };
+	$.fn.stopScrollPagination = function(){
+		return this.each(function() {
+			$(this).attr('scrollPagination', 'disabled');
+		});
+	};
 
   $.fn.scrollPagination.loadContent = function(obj, opts){
 	  
@@ -81,11 +80,12 @@
 						  $("#loading").css("display","none");
 						  return;
 					  }
-					  $(obj).append(data.data);
+					  $(obj).append(data.data.hotelList);
 					  //init_href_click_event();            
 				  }
 			  });
-		  }	else {
+		  }	
+		  else {
 			  if(g_is_more_results == "false"){
 				  $("#loading").css("display","none");
 			  }

@@ -5,9 +5,9 @@ namespace Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CityCoordinates
+ * City
  */
-class CityCoordinates
+class City
 {
     /**
      * @var integer
@@ -24,12 +24,17 @@ class CityCoordinates
      */
     private $coordinates;
 
+    /**
+     * @var \Entities\Region
+     */
+    private $region;
+
 
     /**
      * Set id
      *
      * @param integer $id
-     * @return CityCoordinates
+     * @return City
      */
     public function setId($id)
     {
@@ -52,7 +57,7 @@ class CityCoordinates
      * Set name
      *
      * @param string $name
-     * @return CityCoordinates
+     * @return City
      */
     public function setName($name)
     {
@@ -75,7 +80,7 @@ class CityCoordinates
      * Set coordinates
      *
      * @param string $coordinates
-     * @return CityCoordinates
+     * @return City
      */
     public function setCoordinates($coordinates)
     {
@@ -92,5 +97,28 @@ class CityCoordinates
     public function getCoordinates()
     {
         return $this->coordinates;
+    }
+
+    /**
+     * Set region
+     *
+     * @param \Entities\Region $region
+     * @return City
+     */
+    public function setRegion(\Entities\Region $region = null)
+    {
+        $this->region = $region;
+    
+        return $this;
+    }
+
+    /**
+     * Get region
+     *
+     * @return \Entities\Region 
+     */
+    public function getRegion()
+    {
+        return $this->region;
     }
 }

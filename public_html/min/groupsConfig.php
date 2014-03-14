@@ -56,23 +56,33 @@ return
             array(
             	"../js/stgu.scripts.homepage.js",
             	"../js/royalslider/jquery.royalslider.min.js",
-            	"../js/DropKick/jquery.dropkick.js",
+            	"../js/DropKick/jquery.dropkick.js"
             	
-            	"../js/hotel/home/index.js"
             	
             	//"../js/datepicker_verbose/js/daterangepicker.jQuery.js",
             	//"../js/datepicker_verbose/js/date.js",
             	//"../js/nlform/nlform.js",
             ),
+            
+
+            "hotel_home_styles" =>
+            array(
+            		
+            ),
+            "hotel_home_scripts" =>
+            array(
+            		"../js/hotel/home.js"
+            ),
 
         "hotel_list_styles" =>
             array(
-            		
+            "../js/loadmask/jquery.loadmask.css"
             ),
 		"hotel_list_scripts" => 
 			array(
 				"../js/hotel/list.js",
-				"../js/hotel/scrollpagination.js"
+				"../js/hotel/scrollpagination.js",
+				"../js/loadmask/jquery.loadmask.js"
 			),
 
         "expedia_scripts" =>

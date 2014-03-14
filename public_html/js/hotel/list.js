@@ -18,15 +18,14 @@ $(document).ready(function(){
 			'afterLoad': function(elementsLoaded){
 			}
 		});
-		
 	});
 	
 	$("#sort-by").change(processSortBy);
-	$('input[name="star-filter"]').change(processStarFilter);
+	//$('input[name="star-filter"]').change(processStarFilter);
 	//$('input[name="rate-filter"]').change(processRateFilter);
-	$("body").on("change", "input[name='rate-filter']", processRateFilter);
+	//$("body").on("change", "input[name='rate-filter']", processRateFilter);
 	
-	// functions for slider range
+	// functions for slider price range
 	$(function() {
 		
 		$( "#slider-rate-filter" ).slider({
@@ -36,7 +35,7 @@ $(document).ready(function(){
 			step: 10,
 			values: [ 0, 1000 ],
 			change: function( event, ui ) {
-				$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+				$( "#price-range" ).html( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
 				
 				$("#minRate").val(ui.values[ 0 ]);
 				$("#maxRate").val(ui.values[ 1 ]);
@@ -45,7 +44,25 @@ $(document).ready(function(){
 			}
 	    });
 		
-	    $( "#amount" ).val( "$" + $( "#slider-rate-filter" ).slider( "values", 0 ) + " - $" + $( "#slider-rate-filter" ).slider( "values", 1 ) );
+		$( "#price-range" ).html( "$" + $( "#slider-rate-filter" ).slider( "values", 0 ) + " - $" + $( "#slider-rate-filter" ).slider( "values", 1 ) );
+		
+		$( "#slider-star-filter" ).slider({
+			range: true,
+			min: 1,
+			max: 5,
+			step: 1,
+			values: [ 1, 5 ],
+			change: function( event, ui ) {
+				$( "#star-range" ).html( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+				
+				$("#minStarRating").val(ui.values[ 0 ]);
+				$("#maxStarRating").val(ui.values[ 1 ]);
+				
+				processRateFilter();
+			}
+	    });
+		
+		$( "#star-range" ).html( $( "#slider-star-filter" ).slider( "values", 0 ) + " - " + $( "#slider-star-filter" ).slider( "values", 1 ) );
 	});
 	
 	// functions for datepicker
@@ -118,7 +135,10 @@ function searchHotels(is_currency_filter){
 	
 	params["minRate"] = $( "#minRate" ).val();
 	params["maxRate"] = $( "#maxRate" ).val();
-	params["minStarRating"] =$("input[name='star-filter']:checked").val();
+	
+	params["minStarRating"] = $( "#minStarRating" ).val();
+	params["maxStarRating"] = $( "#maxStarRating" ).val();
+
 	params["sort"] = $("#sort-by").val();
 	params["currencyCode"] = $("#currency-filter").val();
 	params["spformat"] = true;
@@ -141,11 +161,7 @@ function searchHotels(is_currency_filter){
 		$("#hotels-list").html(result.data.hotelList);
 			
 		if(is_currency_filter){
-			$("#rate-filter-container").empty();
-				
-			$.each(rate_filters, function(index, ele){
-				$("#rate-filter-container").append("<input type=\"radio\" name=\"rate-filter\" value=" +  ele.value + " " + ele.selected + ">" + ele.name + "<br/>");
-		       });
+
 		}
 			
 		g_allow_ajax_loading = true;
@@ -155,18 +171,10 @@ function searchHotels(is_currency_filter){
 
 function processStarFilter(){
 	
-	g_hashParams["minStarRating"] =  $("input[name='star-filter']:checked").val();
-	g_hashParams["sort"] = $("#sort-by").val();
-	
-	searchHotels(false);
-}
-
-function processSortBy(){
+	g_hashParams["minStarRating"] = $( "#minStarRating" ).val();
+	g_hashParams["maxStarRating"] = $( "#maxStarRating" ).val();
 	
 	g_hashParams["sort"] = $("#sort-by").val();
-	
-	delete g_hashParams.cacheKey;
-	delete g_hashParams.cacheLocation;
 	
 	searchHotels(false);
 }
@@ -175,26 +183,53 @@ function processRateFilter(){
 
 	g_hashParams["minRate"] = $( "#minRate" ).val();
 	g_hashParams["maxRate"] = $( "#maxRate" ).val();
+
 	g_hashParams["sort"] = $("#sort-by").val();
 	
+	delete g_hashParams.cacheKey;
+	delete g_hashParams.cacheLocation;
+	
 	searchHotels(false);
-	
-	/*
-	var filterValue = $("input[name='rate-filter']:checked").val();
-	var filterValues = [];
-	
-	if(filterValue != "-1"){
-		filterValues = filterValue.split("-");
-		g_hashParams["minRate"] = filterValues[0];
-		g_hashParams["maxRate"] = filterValues[1];
-	}
-	else{
-		g_hashParams["minRate"] = null;
-		g_hashParams["maxRate"] = null;
-	}
+}
+
+function processSortBy(){
 	
 	g_hashParams["sort"] = $("#sort-by").val();
 	
+	if (g_hashParams["sort"] == "PRICE_AVERAGE" || g_hashParams["sort"] == "PRICE_REVERSE"){
+		
+		 sortByPrice(g_hashParams["sort"]);
+		
+		return;
+	}
+	
+	delete g_hashParams.cacheKey;
+	delete g_hashParams.cacheLocation;
+	
 	searchHotels(false);
-	*/
+}
+
+function sortByPrice(method){
+
+	var list = $(".hotel-item").get();
+
+	var sort_by_price_low_high = function(a, b) {
+	    return $(a).data("price") >  $(b).data("price");
+	};
+	
+	var sort_by_price_high_low = function(a, b) {
+	    return $(a).data("price") <  $(b).data("price");
+	};
+	
+	if (method == "PRICE_AVERAGE"){
+		list.sort(sort_by_price_low_high);
+	}else {
+		list.sort(sort_by_price_high_low);
+	}
+
+	
+
+	for (var i = 0; i < list.length; i++) {
+	    list[i].parentNode.appendChild(list[i]);
+	}
 }

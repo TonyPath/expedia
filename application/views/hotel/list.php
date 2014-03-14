@@ -38,32 +38,27 @@ $copy_params = $_GET;
 	<br/>
 	
 	<div style="width:18%;float:left;" class="">
-		
-		<input type="hidden" id="minRate" value="0" />
-    	<input type="hidden" id="maxRate" value="1000" />
-		
-		<p>
-  			<label for="amount">Price range:</label>
- 			 <input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;">
-		</p>
- 
-		<div id="slider-rate-filter"></div>
-		
-		<div class="bold-text" style="margin-top: 15px;">
-			Star Rating
-        	<br />
-        	<input type="radio" name="star-filter" value="1" checked>Any Star Rating<br>
-			<input type="radio" name="star-filter" value="2">2 Stars (and up)<br>
-			<input type="radio" name="star-filter" value="3">3 Stars (and up)<br>
-			<input type="radio" name="star-filter" value="4">4 Stars (and up)<br>
-			<input type="radio" name="star-filter" value="5">5 Stars (and up)<br>
-        </div>
         
-        <div class="bold-text" style="margin-top: 15px;" id="rate-filter-container">
-			Avg. Nightly Rate
-        	<br />
-        	
-        </div>
+        <fieldset id="FilterByStar">
+        	<legend>Star Rating</legend>
+    
+   			<div id="star-range"></div>
+    		<div id="slider-star-filter" class=""></div>
+    
+    		<input type="hidden" id="minStarRating" value="1" />
+    		<input type="hidden" id="maxStarRating" value="5" />
+		</fieldset>
+        
+        
+        <fieldset id="FilterByPrice">
+        	<legend>Total price</legend>
+    
+   			<div id="price-range"></div>
+    		<div id="slider-rate-filter" class=""></div>
+    
+    		<input type="hidden" id="minRate" value="0" />
+    		<input type="hidden" id="maxRate" value="1000" />
+		</fieldset>
 		
 	</div>
 	
@@ -86,10 +81,12 @@ $copy_params = $_GET;
 			<div class="column_4">
 				<span class="">Sort by:</span>
 				<select class="" id="sort-by">
-            		<option value="PRICE">Price (Low to High)</option>
+					<option value="OVERALL_VALUE" selected>Our Recommendations</option>
+            		<option value="PRICE_AVERAGE">Price (Low to High)</option>
             		<option value="PRICE_REVERSE">Price (High to Low)</option>
             		<option value="QUALITY_REVERSE">Star Rating (Low to High)</option>
-            		<option value="QUALITY" selected>Star Rating (High to Low)</option>
+            		<option value="QUALITY">Star Rating (High to Low)</option>
+            		
           		</select>
         	</div>
 		</div>

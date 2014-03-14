@@ -31,6 +31,43 @@ class HotelRepository extends EntityRepository
 		return $result->getResult()[0];
 	}
 	
+	public function getHotelsIDList($regionID){
+		
+		$em = $this->_em;
+		
+		$qb = $em->createQueryBuilder();
+		
+		$qb->select("Hotel.id as hotelID");
+		$qb->addSelect("Field(Hotel.supplierType, 'ESR','EEM','GDS') as HIDDEN supplier");
+		
+		$qb->from("Entities\Hotel", "Hotel");
+		
+		$qb->innerJoin(
+				"Entities\RegionHotelMapping", "HotelRegionMapping",
+				\Doctrine\ORM\Query\Expr\Join::WITH,
+				"HotelRegionMapping.hotel = Hotel"
+		);
+		
+		$qb->andWhere("HotelRegionMapping.regionID = :region");
+		$qb->setParameter('region', $regionID);
+		
+		$qb->addOrderBy('supplier');
+		
+		$results = $qb
+				->setMaxResults(40)
+				->setFirstResult(0)
+				->getQuery()
+				->getResult();
+		
+		$hotelIDList = array();
+		
+		foreach ($results as $item){
+			$hotelIDList[] = $item["hotelID"];
+		}
+		
+		return implode(",", $hotelIDList);
+	}
+	
 	public function getHotels($regionIDList = null, $lang = "ElGr"){
 
 		$em = $this->_em;

@@ -1,0 +1,19 @@
+Entities\City:
+ type: entity
+ table: citycoordinateslist
+ id:
+  id: 
+   type: integer
+   column: RegionID
+ fields:
+  name:
+   column: RegionName
+  coordinates:
+   column: Coordinates 
+ oneToOne: 
+  region:
+   targetEntity: Region
+   inversedBy: city
+   joinColumn:
+    name: RegionID
+    referencedColumnName: RegionID   

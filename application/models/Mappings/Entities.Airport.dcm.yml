@@ -1,4 +1,4 @@
-Entities\AirportCoordinates:
+Entities\Airport:
  type: entity
  table: airportcoordinateslist
  id:
@@ -13,4 +13,4 @@ Entities\AirportCoordinates:
   latitude:
    column: Latitude
   longitude:
-   column: Longitude    
+   column: Longitude

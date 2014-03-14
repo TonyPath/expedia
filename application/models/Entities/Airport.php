@@ -5,9 +5,9 @@ namespace Entities;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * AirportCoordinates
+ * Airport
  */
-class AirportCoordinates
+class Airport
 {
     /**
      * @var integer
@@ -39,7 +39,7 @@ class AirportCoordinates
      * Set id
      *
      * @param integer $id
-     * @return AirportCoordinates
+     * @return Airport
      */
     public function setId($id)
     {
@@ -62,7 +62,7 @@ class AirportCoordinates
      * Set name
      *
      * @param string $name
-     * @return AirportCoordinates
+     * @return Airport
      */
     public function setName($name)
     {
@@ -85,7 +85,7 @@ class AirportCoordinates
      * Set code
      *
      * @param string $code
-     * @return AirportCoordinates
+     * @return Airport
      */
     public function setCode($code)
     {
@@ -108,7 +108,7 @@ class AirportCoordinates
      * Set latitude
      *
      * @param string $latitude
-     * @return AirportCoordinates
+     * @return Airport
      */
     public function setLatitude($latitude)
     {
@@ -131,7 +131,7 @@ class AirportCoordinates
      * Set longitude
      *
      * @param string $longitude
-     * @return AirportCoordinates
+     * @return Airport
      */
     public function setLongitude($longitude)
     {

@@ -61,7 +61,7 @@ $(document).ready(function(){
 		});
 		
 		$("#destination_string").catcomplete({
-			delay: 500, 
+			delay: 300, 
 			minLength: 3,
 			source:  function (request, response) {
 				
@@ -98,8 +98,7 @@ $(document).ready(function(){
 				ui.item.value = ui.item.label;
 				is_selected = true;
 				
-				$("#item_id").val(ui.item.id);
-				$("#item_category").val(ui.item.category);
+				$("#region_id").val(ui.item.id);
 			}
 		});
 		
@@ -132,11 +131,11 @@ $(document).ready(function(){
 	});
 	
 	
-	$("body .frmSearchHotelHomePage").on("click", "#btnSearchHotel" ,function(){
+	$("body #frmHomePageSearchHotel").on("click", "#btnSearchHotel" ,function(){
 		search_submit();
 	});
 	
-	$("body .frmSearchHotelHomePage").on("change", "#search_room" ,function(){
+	$("body #frmHomePageSearchHotel").on("change", "#search_room" ,function(){
 		
 		console.log('room_change');
 		
@@ -166,7 +165,7 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("body .frmSearchHotelHomePage").on("change", ".child-box" ,function(){
+	$("body #frmHomePageSearchHotel").on("change", ".child-box" ,function(){
 		
 		console.log('adult_change');
 		
@@ -192,7 +191,7 @@ function search_submit(){
 		var $form  = $("#btnSearchHotel").closest("form");
 		var values = {};
 	
-		var item_id = $("#item_id").val();
+		var region_id = $("#region_id").val();
 	    var arrival_date = $("#arrival_date").val();
 	    var departure_date = $("#departure_date").val();
 	    var destination_string = $("#destination_string").val();

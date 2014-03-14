@@ -39,6 +39,11 @@ class PointOfInterest
      */
     private $classification;
 
+    /**
+     * @var \Entities\Region
+     */
+    private $region;
+
 
     /**
      * Set id
@@ -176,5 +181,28 @@ class PointOfInterest
     public function getClassification()
     {
         return $this->classification;
+    }
+
+    /**
+     * Set region
+     *
+     * @param \Entities\Region $region
+     * @return PointOfInterest
+     */
+    public function setRegion(\Entities\Region $region = null)
+    {
+        $this->region = $region;
+    
+        return $this;
+    }
+
+    /**
+     * Get region
+     *
+     * @return \Entities\Region 
+     */
+    public function getRegion()
+    {
+        return $this->region;
     }
 }

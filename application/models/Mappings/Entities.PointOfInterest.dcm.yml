@@ -16,3 +16,10 @@ Entities\PointOfInterest:
    column: Longitude
   classification: 
    column: SubClassification
+ oneToOne: 
+  region:
+   targetEntity: Region
+   inversedBy: poi
+   joinColumn:
+    name: RegionID
+    referencedColumnName: RegionID 
